@@ -8,6 +8,7 @@ const Vehicle=require('./model/vehicle');
 const Defectmemo=require('./model/defectmemo');
 const bodyParser=require('body-parser');
 const Duty_Log=require('./model/duty_log');
+const Driver= require('./model/driver');
 
 app.use(bodyParser.urlencoded({extended:true}));
 
