@@ -7,6 +7,7 @@ const port = 3000
 const Vehicle=require('./model/vehicle');
 const Driver= require('./model/driver');
 const bodyParser=require('body-parser');
+const Duty_Log=require('./model/duty_log');
 
 app.use(bodyParser.urlencoded({extended:true}));
 
@@ -77,6 +78,35 @@ app.post('/drivers/add', async(req, res) => {
         }else{
             res.send("No Driver Added");
         }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+app.get('/duty_log', async(req, res) => {
+    try {
+        const dutyLog=await Duty_Log.find();
+        res.send(dutyLog);
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+app.get('/duty_log/:id', async(req, res) => {
+    try {
+        const dutyID=req.params.id;
+        const foundDuty=await Duty_Log.findById(dutyID);
+        res.send(foundDuty);
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+app.get('/duty_log/:vehicle_id', async(req, res) => {
+    try {
+        const vehicleID=req.params.vehicle_id;
+        const foundVehicleDutyLog=await Duty_Log.find({});
+        res.send(foundDuty);
     } catch (error) {
         console.log(error);
     }
