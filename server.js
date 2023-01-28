@@ -6,7 +6,7 @@ const app = express()
 const port = 3000
 const Vehicle=require('./model/vehicle');
 const Driver= require('./model/driver');
-const Defectmemo=require('./model/defectmemo');
+const DefectMemo=require('./model/defectmemo');
 const bodyParser=require('body-parser');
 const Duty_Log=require('./model/duty_log');
 
@@ -112,34 +112,49 @@ app.get('/duty_log/:vehicle_id', async(req, res) => {
         console.log(error);
     }
 });
+
+// To Search Memo
 app.get('/memo/:id', async(req, res) => {
     try {
         const memoID=req.params.id;
-        const foundDefect=await Defectmemo.findById(memoID);
+        const foundDefect=await DefectMemo.findById(memoID);
         res.send(foundDefect);
     } catch (error) {
         console.log(error);
     }
 });
+
+// To Search Memo By Vehicle Id
 app.get('/memo/vehicle/:vehicle_id',async(req,res)=>{
     try{
         const vehicleId = req.params.vehicle_id;
-        const foundvehiclememo = await Memo.find({vehicle_id:vehicleId});
-        res.send(foundvehiclememo);
+        const foundVehicleMemo = await Memo.find({vehicle_id:vehicleId});
+        res.send(foundVehicleMemo);
     }catch(err){
         console.log(err);
     }
 })
 
+// To Add Memo
 app.post('/memo/add', async(req, res) => {
     try {
-        const newdefectmemo=await new Defectmemo(req.body);
-        newdefectmemo.save();
-        if (newdefectmemo) {
+        const newDefectMemo=await new DefectMemo(req.body);
+        newDefectMemo.save();
+        if (newDefectMemo) {
             res.send("New Memo Added");
         }else{
             res.send("No Memo Added");
         }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+// To Show Memo
+app.get('/memo', async(req, res) => {
+    try {
+        const newDefectMemo=await DefectMemo.find();
+        res.send(newDefectMemo);
     } catch (error) {
         console.log(error);
     }
