@@ -9,12 +9,13 @@ const Driver= require('./model/driver');
 const DefectMemo=require('./model/defectmemo');
 const bodyParser=require('body-parser');
 const Duty_Log=require('./model/duty_log');
+const Driver= require('./model/driver');
 
 app.use(bodyParser.urlencoded({extended:true}));
 
 
 // To list vehicles
-app.get('/vehicles', async(req, res) => {
+app.get('/vehicles', async(req, res) => {   
     try {
         const vehicleList=await Vehicle.find();
         res.send(vehicleList);
@@ -38,17 +39,6 @@ app.post('/vehicles/add', async(req, res) => {
     }
 });
 
-
-// app.get('/vehicles/:id', async(req, res) => {
-//     try {
-//         const vehicleID=req.params.id;
-//         const foundVehicle=await Vehicle.findById(vehicleID);
-//         res.send(foundVehicle);
-//     } catch (error) {
-//         console.log(error);
-//     }
-// });
-// To find vehicles
 app.get('/vehicles/:id', async(req, res) => {
     try {
         const vehicleID=req.params.id;
@@ -58,6 +48,59 @@ app.get('/vehicles/:id', async(req, res) => {
         console.log(error);
     }
 });
+
+/*
+*! Routes For geeting job card
+*/
+
+
+app.post('/job_card/delete/:id', async(req, res)=>{
+    try {
+        console.log("HHHH");
+        const deletedJobCard=await Job_Card.deleteOne({_id: req.params.id});
+        console.log(deletedJobCard);
+        if (deletedJobCard) {
+            res.send("Deleted Job Card");
+        } else {
+            res.send("Not Found");
+        }
+    } catch (error) {
+        console.log(error);
+    }
+
+})
+
+app.get('/Job_Card',async(req,res)=>{
+    try{
+        const Job_card=await Job_Card.find();
+        res.send(Job_card);
+    
+    }
+    catch(error){
+        console.log(error);
+    }
+})
+/*
+*! Routes For addying a new documment in job card
+*/
+app.post('/Job_Card', async(req, res) => {
+    try {
+        const newJob_card=await new Job_Card(req.body);
+        newJob_card.save();
+        if (newJob_card) {
+            res.send("New Job card id Added");
+        }else{
+            res.send("New Job card cannot be added Added");
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+
+
+
+
 
 // To find drivers
 app.get('/drivers', async(req, res) => {
@@ -103,11 +146,11 @@ app.get('/duty_log/:id', async(req, res) => {
     }
 });
 
-app.get('/duty_log/:vehicle_id', async(req, res) => {
+app.get('/duty_log/vehicle/:vehicle_id', async(req, res) => {
     try {
         const vehicleID=req.params.vehicle_id;
-        const foundVehicleDutyLog=await Duty_Log.find({});
-        res.send(foundDuty);
+        const foundVehicleDutyLog=await Duty_Log.find({vehicle_id:vehicleID});
+        res.send(foundVehicleDutyLog);
     } catch (error) {
         console.log(error);
     }
