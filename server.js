@@ -37,17 +37,6 @@ app.post('/vehicles/add', async(req, res) => {
     }
 });
 
-
-// app.get('/vehicles/:id', async(req, res) => {
-//     try {
-//         const vehicleID=req.params.id;
-//         const foundVehicle=await Vehicle.findById(vehicleID);
-//         res.send(foundVehicle);
-//     } catch (error) {
-//         console.log(error);
-//     }
-// });
-// To find vehicles
 app.get('/vehicles/:id', async(req, res) => {
     try {
         const vehicleID=req.params.id;
@@ -102,11 +91,11 @@ app.get('/duty_log/:id', async(req, res) => {
     }
 });
 
-app.get('/duty_log/:vehicle_id', async(req, res) => {
+app.get('/duty_log/vehicle/:vehicle_id', async(req, res) => {
     try {
         const vehicleID=req.params.vehicle_id;
-        const foundVehicleDutyLog=await Duty_Log.find({});
-        res.send(foundDuty);
+        const foundVehicleDutyLog=await Duty_Log.find({vehicle_id:vehicleID});
+        res.send(foundVehicleDutyLog);
     } catch (error) {
         console.log(error);
     }
