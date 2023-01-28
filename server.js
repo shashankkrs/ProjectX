@@ -32,15 +32,15 @@ app.post('/vehicles/add', async(req, res) => {
 });
 
 
-app.get('/vehicles/:id', async(req, res) => {
-    try {
-        const vehicleID=req.params.id;
-        const foundVehicle=await Vehicle.findById(vehicleID);
-        res.send(foundVehicle);
-    } catch (error) {
-        console.log(error);
-    }
-});
+// app.get('/vehicles/:id', async(req, res) => {
+//     try {
+//         const vehicleID=req.params.id;
+//         const foundVehicle=await Vehicle.findById(vehicleID);
+//         res.send(foundVehicle);
+//     } catch (error) {
+//         console.log(error);
+//     }
+// });
 
 
 

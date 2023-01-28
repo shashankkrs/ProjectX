@@ -1,9 +1,17 @@
 const mongoose=require('mongoose');
 
+// * * Vehicle elements
 const vehicleSchema=mongoose.Schema({
-    vehicle_no : String,
+    registration_no : String,
     vehicle_type :String,
-    chasis_no :Number
+    chasis_no :Number,
+    engine_no:Number,
+    crp_no:Number,
+    no_of_cylinders:Number,
+    horse_power:Number,
+    size_of_sparking_plug:String,
+    Rank:String,
+    date_of_service:Number
 });
 
 const vehicleModel=mongoose.model('vehicles',vehicleSchema);
