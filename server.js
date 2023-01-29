@@ -3,69 +3,29 @@ const express = require('express')
 const app = express()
 const port = 3000
 
-const Driver= require('./model/driver');
 const DefectMemo=require('./model/defectmemo');
 const bodyParser=require('body-parser');
 const Duty_Log=require('./model/duty_log');
 const vehicleRoute=require('./routes/vehicles');
-const JobCard=require('./routes/job_card');
+const JobCardRoute=require('./routes/job_card');
+const driverRoute=require('./routes/drivers');
+const dutyLogRoute=require('./routes/duty_log');
 
 app.use(bodyParser.urlencoded({extended:true}));
 
 
 app.use('/vehicles',vehicleRoute);
-app.use('/job_card',JobCard);
+app.use('/job_card',JobCardRoute);
+
+app.use('/duty_log',dutyLogRoute);
+
+app.use('/drivers',driverRoute);
 
 
 
 
 
 
-// To find drivers
-app.get('/drivers', async(req, res) => {
-    try {
-        const driverList=await Driver.find();
-        res.send(driverList);
-    } catch (error) {
-        console.log(error);
-    }
-});
-
-// To add drivers
-app.post('/drivers/add', async(req, res) => {
-    try {
-        const newDriver=await new Driver(req.body);
-        newDriver.save();
-        if (newDriver) {
-            res.send("New Driver Added");
-        }else{
-            res.send("No Driver Added");
-        }
-    } catch (error) {
-        console.log(error);
-    }
-});
-
-//To find duty log
-app.get('/duty_log', async(req, res) => {
-    try {
-        const dutyLog=await Duty_Log.find();
-        res.send(dutyLog);
-    } catch (error) {
-        console.log(error);
-    }
-});
-
-//To find duty log by id
-app.get('/duty_log/:id', async(req, res) => {
-    try {
-        const dutyID=req.params.id;
-        const foundDuty=await Duty_Log.findById(dutyID);
-        res.send(foundDuty);
-    } catch (error) {
-        console.log(error);
-    }
-});
 
 // to find duty log by vehicle id
 app.get('/duty_log/vehicle/:vehicle_id', async(req, res) => {
@@ -123,17 +83,6 @@ app.get('/memo', async(req, res) => {
     try {
         const newDefectMemo=await DefectMemo.find();
         res.send(newDefectMemo);
-    } catch (error) {
-        console.log(error);
-    }
-});
-
-// To find drivers
-app.get('/drivers/:id', async(req, res) => {
-    try {
-        const driverID=req.params.id;
-        const foundDriver=await Driver.findById(driverID);
-        res.send(foundDriver);
     } catch (error) {
         console.log(error);
     }
