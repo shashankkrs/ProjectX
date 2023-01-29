@@ -1,5 +1,4 @@
 const express=require('express');
-const duty_log = require('../model/duty_log');
 const Duty_Log=require('../model/duty_log');
 const route= express.Router();
 
