@@ -1,5 +1,3 @@
-// including required files
-
 require('./conn/mongo')
 const express = require('express')
 const app = express()
@@ -78,7 +76,8 @@ app.get('/Job_Card',async(req,res)=>{
     catch(error){
         console.log(error);
     }
-})
+});
+
 /*
 *! Routes For addying a new documment in job card
 */
@@ -154,6 +153,8 @@ app.get('/duty_log/vehicle/:vehicle_id', async(req, res) => {
         console.log(error);
     }
 });
+
+
 app.get('/memo/:id', async(req, res) => {
     try {
         const memoID=req.params.id;
@@ -163,6 +164,7 @@ app.get('/memo/:id', async(req, res) => {
         console.log(error);
     }
 });
+
 app.get('/memo/vehicle/:vehicle_id',async(req,res)=>{
     try{
         const vehicleId = req.params.vehicle_id;
