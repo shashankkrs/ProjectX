@@ -1,145 +1,22 @@
 require('./conn/mongo')
 const express = require('express')
+const bodyParser=require('body-parser');
 const app = express()
+app.use(bodyParser.urlencoded({extended:true}));
 const port = 3000
 
-const Driver= require('./model/driver');
-const bodyParser=require('body-parser');
-const Duty_Log=require('./model/duty_log');
 const vehicleRoute=require('./routes/vehicles');
+const JobCardRoute=require('./routes/job_card');
+const driverRoute=require('./routes/drivers');
+const dutyLogRoute=require('./routes/duty_log');
 const defectMemoRoute = require('./routes/defectmemos');
-
-app.use(bodyParser.urlencoded({extended:true}));
 
 
 app.use('/vehicles',vehicleRoute);
-
+app.use('/job_card',JobCardRoute);
+app.use('/duty_log',dutyLogRoute);
+app.use('/drivers',driverRoute);
 app.use('/memo',defectMemoRoute);
-
-
-/*
-*! Routes For geeting job card
-*/
-
-
-app.post('/job_card/delete/:id', async(req, res)=>{
-    try {
-        console.log("HHHH");
-        const deletedJobCard=await Job_Card.deleteOne({_id: req.params.id});
-        console.log(deletedJobCard);
-        if (deletedJobCard) {
-            res.send("Deleted Job Card");
-        } else {
-            res.send("Not Found");
-        }
-    } catch (error) {
-        console.log(error);
-    }
-
-})
-
-app.get('/Job_Card',async(req,res)=>{
-    try{
-        const Job_card=await Job_Card.find();
-        res.send(Job_card);
-    
-    }
-    catch(error){
-        console.log(error);
-    }
-});
-
-/*
-*! Routes For addying a new documment in job card
-*/
-app.post('/Job_Card', async(req, res) => {
-    try {
-        const newJob_card=await new Job_Card(req.body);
-        newJob_card.save();
-        if (newJob_card) {
-            res.send("New Job card id Added");
-        }else{
-            res.send("New Job card cannot be added Added");
-        }
-    } catch (error) {
-        console.log(error);
-    }
-});
-
-
-
-
-
-
-// To find drivers
-app.get('/drivers', async(req, res) => {
-    try {
-        const driverList=await Driver.find();
-        res.send(driverList);
-    } catch (error) {
-        console.log(error);
-    }
-});
-
-// To add drivers
-app.post('/drivers/add', async(req, res) => {
-    try {
-        const newDriver=await new Driver(req.body);
-        newDriver.save();
-        if (newDriver) {
-            res.send("New Driver Added");
-        }else{
-            res.send("No Driver Added");
-        }
-    } catch (error) {
-        console.log(error);
-    }
-});
-
-//To find duty log
-app.get('/duty_log', async(req, res) => {
-    try {
-        const dutyLog=await Duty_Log.find();
-        res.send(dutyLog);
-    } catch (error) {
-        console.log(error);
-    }
-});
-
-//To find duty log by id
-app.get('/duty_log/:id', async(req, res) => {
-    try {
-        const dutyID=req.params.id;
-        const foundDuty=await Duty_Log.findById(dutyID);
-        res.send(foundDuty);
-    } catch (error) {
-        console.log(error);
-    }
-});
-
-// to find duty log by vehicle id
-app.get('/duty_log/vehicle/:vehicle_id', async(req, res) => {
-    try {
-        const vehicleID=req.params.vehicle_id;
-        const foundVehicleDutyLog=await Duty_Log.find({vehicle_id:vehicleID});
-        res.send(foundVehicleDutyLog);
-    } catch (error) {
-        console.log(error);
-    }
-});
-
-
-
-// To find drivers
-app.get('/drivers/:id', async(req, res) => {
-    try {
-        const driverID=req.params.id;
-        const foundDriver=await Driver.findById(driverID);
-        res.send(foundDriver);
-    } catch (error) {
-        console.log(error);
-    }
-});
 
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`)
