@@ -3,11 +3,11 @@ const express = require('express')
 const app = express()
 const port = 3000
 
-const Driver= require('./model/driver');
 const DefectMemo=require('./model/defectmemo');
 const bodyParser=require('body-parser');
 const Duty_Log=require('./model/duty_log');
 const vehicleRoute=require('./routes/vehicles');
+const driverRoute=require('./routes/drivers');
 const dutyLogRoute=require('./routes/duty_log');
 
 app.use(bodyParser.urlencoded({extended:true}));
@@ -16,6 +16,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use('/vehicles',vehicleRoute);
 app.use('/duty_log',dutyLogRoute);
 
+app.use('/drivers',driverRoute);
 
 /*
 *! Routes For geeting job card
@@ -101,6 +102,16 @@ app.post('/drivers/add', async(req, res) => {
 
 
 
+// to find duty log by vehicle id
+app.get('/duty_log/vehicle/:vehicle_id', async(req, res) => {
+    try {
+        const vehicleID=req.params.vehicle_id;
+        const foundVehicleDutyLog=await Duty_Log.find({vehicle_id:vehicleID});
+        res.send(foundVehicleDutyLog);
+    } catch (error) {
+        console.log(error);
+    }
+});
 
 // To Search Memo
 
@@ -147,17 +158,6 @@ app.get('/memo', async(req, res) => {
     try {
         const newDefectMemo=await DefectMemo.find();
         res.send(newDefectMemo);
-    } catch (error) {
-        console.log(error);
-    }
-});
-
-// To find drivers
-app.get('/drivers/:id', async(req, res) => {
-    try {
-        const driverID=req.params.id;
-        const foundDriver=await Driver.findById(driverID);
-        res.send(foundDriver);
     } catch (error) {
         console.log(error);
     }
