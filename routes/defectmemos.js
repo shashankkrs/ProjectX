@@ -14,7 +14,6 @@ route.get('/:id', async(req, res) => {
 });
 
 // To Search Memo By Vehicle Id
-
 route.get('/vehicle/:vehicle_id',async(req,res)=>{
     try{
         const vehicleId = req.params.vehicle_id;

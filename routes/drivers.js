@@ -2,7 +2,7 @@ const express = require('express');
 const Driver= require('../model/driver');
 const route = express.Router();
 
-// To find drivers
+// To Find drivers
 route.get('/', async(req, res) => {
     try {
         const driverList=await Driver.find();
@@ -12,7 +12,7 @@ route.get('/', async(req, res) => {
     }
 });
 
-// To add drivers
+// To Add Drivers
 route.post('/add', async(req, res) => {
     try {
         const newDriver=await new Driver(req.body);
@@ -27,7 +27,7 @@ route.post('/add', async(req, res) => {
     }
 });
 
-// To find drivers
+// To Find Drivers by ID
 route.get('/:id', async(req, res) => {
     try {
         const driverID=req.params.id;

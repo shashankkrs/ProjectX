@@ -2,7 +2,7 @@ const express=require('express');
 const Duty_Log=require('../model/duty_log');
 const route= express.Router();
 
-//To find duty log
+//To Find Duty Log
 route.get('/', async(req, res) => {
     try {
         const dutyLog=await Duty_Log.find();
@@ -12,7 +12,7 @@ route.get('/', async(req, res) => {
     }
 });
 
-//To find duty log by id
+//To Find Duty Log By Id
 route.get('/:id', async(req, res) => {
     try {
         const dutyID=req.params.id;
@@ -23,7 +23,7 @@ route.get('/:id', async(req, res) => {
     }
 });
 
-// to find duty log by vehicle id
+// To Find Duty Log By Vehicle ID
 route.get('/vehicle/:vehicle_id', async(req, res) => {
     try {
         const vehicleID=req.params.vehicle_id;
@@ -34,6 +34,7 @@ route.get('/vehicle/:vehicle_id', async(req, res) => {
     }
 });
 
+//To Add New Duty Log
 route.post('/add', async(req, res) =>{
     try {
         const newDutyLog=await new Duty_Log(req.body);
