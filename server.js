@@ -16,31 +16,10 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 app.use('/vehicles',vehicleRoute);
 app.use('/job_card',JobCardRoute);
-
 app.use('/duty_log',dutyLogRoute);
-
 app.use('/drivers',driverRoute);
 
-
-
-
-
-
-
-// to find duty log by vehicle id
-app.get('/duty_log/vehicle/:vehicle_id', async(req, res) => {
-    try {
-        const vehicleID=req.params.vehicle_id;
-        const foundVehicleDutyLog=await Duty_Log.find({vehicle_id:vehicleID});
-        res.send(foundVehicleDutyLog);
-    } catch (error) {
-        console.log(error);
-    }
-});
-
 // To Search Memo
-
-
 app.get('/memo/:id', async(req, res) => {
     try {
         const memoID=req.params.id;
@@ -52,7 +31,6 @@ app.get('/memo/:id', async(req, res) => {
 });
 
 // To Search Memo By Vehicle Id
-
 app.get('/memo/vehicle/:vehicle_id',async(req,res)=>{
     try{
         const vehicleId = req.params.vehicle_id;
