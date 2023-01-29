@@ -1,5 +1,6 @@
 const express=require('express');
-const duty_log=require('../model/duty_log');
+const duty_log = require('../model/duty_log');
+const Duty_Log=require('../model/duty_log');
 const route= express.Router();
 
 //To find duty log
@@ -33,5 +34,20 @@ route.get('/vehicle/:vehicle_id', async(req, res) => {
         console.log(error);
     }
 });
+
+route.post('/add', async(req, res) =>{
+    try {
+        const newDutyLog=await new Duty_Log(req.body);
+        newDutyLog.save();
+        if(newDutyLog){
+            res.send("new duty log is added");
+        }
+        else {
+            res.send("not added");
+        }
+    } catch (error) {
+        console.log(error);
+    }
+})
 
 module.exports=route;
