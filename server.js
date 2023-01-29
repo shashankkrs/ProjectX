@@ -1,17 +1,16 @@
 require('./conn/mongo')
 const express = require('express')
+const bodyParser=require('body-parser');
 const app = express()
 const port = 3000
+app.use(bodyParser.urlencoded({extended:true}));
 
 const DefectMemo=require('./model/defectmemo');
-const bodyParser=require('body-parser');
-const Duty_Log=require('./model/duty_log');
+
 const vehicleRoute=require('./routes/vehicles');
 const JobCardRoute=require('./routes/job_card');
 const driverRoute=require('./routes/drivers');
 const dutyLogRoute=require('./routes/duty_log');
-
-app.use(bodyParser.urlencoded({extended:true}));
 
 
 app.use('/vehicles',vehicleRoute);
