@@ -8,6 +8,7 @@ const DefectMemo=require('./model/defectmemo');
 const bodyParser=require('body-parser');
 const Duty_Log=require('./model/duty_log');
 
+
 app.use(bodyParser.urlencoded({extended:true}));
 
 
@@ -125,6 +126,7 @@ app.post('/drivers/add', async(req, res) => {
     }
 });
 
+//To find duty log
 app.get('/duty_log', async(req, res) => {
     try {
         const dutyLog=await Duty_Log.find();
@@ -134,6 +136,7 @@ app.get('/duty_log', async(req, res) => {
     }
 });
 
+//To find duty log by id
 app.get('/duty_log/:id', async(req, res) => {
     try {
         const dutyID=req.params.id;
@@ -144,6 +147,7 @@ app.get('/duty_log/:id', async(req, res) => {
     }
 });
 
+// to find duty log by vehicle id
 app.get('/duty_log/vehicle/:vehicle_id', async(req, res) => {
     try {
         const vehicleID=req.params.vehicle_id;
