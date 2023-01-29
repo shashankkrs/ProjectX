@@ -2,16 +2,7 @@ const express=require('express');
 const DefectMemo=require('../model/defectmemo');
 const route=express.Router();
 
-// To Search Memo
-route.get('/:id', async(req, res) => {
-    try {
-        const memoID=req.params.id;
-        const foundDefect=await DefectMemo.findById(memoID);
-        res.send(foundDefect);
-    } catch (error) {
-        console.log(error);
-    }
-});
+
 
 // To Search Memo By Vehicle Id
 route.get('/vehicle/:vehicle_id',async(req,res)=>{
@@ -44,6 +35,17 @@ route.get('/', async(req, res) => {
     try {
         const newDefectMemo=await DefectMemo.find();
         res.send(newDefectMemo);
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+// To Search Memo
+route.get('/:id', async(req, res) => {
+    try {
+        const memoID=req.params.id;
+        const foundDefect=await DefectMemo.findById(memoID);
+        res.send(foundDefect);
     } catch (error) {
         console.log(error);
     }

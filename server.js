@@ -27,7 +27,7 @@ const vehicleRoute=require('./routes/vehicles');
 const JobCardRoute=require('./routes/job_card');
 const driverRoute=require('./routes/drivers');
 const dutyLogRoute=require('./routes/duty_log');
-const defectMemoRoute=require('./model/defectmemo');
+const defectMemoRoute=require('./routes/defectmemos');
 
 //Defining Functions
 const isLoggedIn=async(req,res,next)=>{
