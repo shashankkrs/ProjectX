@@ -3,17 +3,18 @@ const express = require('express')
 const app = express()
 const port = 3000
 
-const Driver= require('./model/driver');
 const DefectMemo=require('./model/defectmemo');
 const bodyParser=require('body-parser');
 const Duty_Log=require('./model/duty_log');
 const vehicleRoute=require('./routes/vehicles');
+const driverRoute=require('./routes/drivers');
 
 app.use(bodyParser.urlencoded({extended:true}));
 
 
 app.use('/vehicles',vehicleRoute);
 
+app.use('/drivers',driverRoute);
 
 /*
 *! Routes For geeting job card
@@ -58,36 +59,6 @@ app.post('/Job_Card', async(req, res) => {
             res.send("New Job card id Added");
         }else{
             res.send("New Job card cannot be added Added");
-        }
-    } catch (error) {
-        console.log(error);
-    }
-});
-
-
-
-
-
-
-// To find drivers
-app.get('/drivers', async(req, res) => {
-    try {
-        const driverList=await Driver.find();
-        res.send(driverList);
-    } catch (error) {
-        console.log(error);
-    }
-});
-
-// To add drivers
-app.post('/drivers/add', async(req, res) => {
-    try {
-        const newDriver=await new Driver(req.body);
-        newDriver.save();
-        if (newDriver) {
-            res.send("New Driver Added");
-        }else{
-            res.send("No Driver Added");
         }
     } catch (error) {
         console.log(error);
@@ -171,17 +142,6 @@ app.get('/memo', async(req, res) => {
     try {
         const newDefectMemo=await DefectMemo.find();
         res.send(newDefectMemo);
-    } catch (error) {
-        console.log(error);
-    }
-});
-
-// To find drivers
-app.get('/drivers/:id', async(req, res) => {
-    try {
-        const driverID=req.params.id;
-        const foundDriver=await Driver.findById(driverID);
-        res.send(foundDriver);
     } catch (error) {
         console.log(error);
     }
