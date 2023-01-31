@@ -1,7 +1,10 @@
 const mongoose=require('mongoose');
 
 const defectMemoSchema=mongoose.Schema({
-    vehicle_id:mongoose.Schema.Types.ObjectId,
+    vehicle_id:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'vehicles'
+    },
     sl_no:Number,
     defect:String,
     defect_reason:String,

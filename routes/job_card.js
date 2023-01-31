@@ -7,7 +7,6 @@ route.get('/',async(req,res)=>{
     try{
         const Job_card=await Job_Card.find();
         res.send(Job_card);
-    
     }
     catch(error){
         console.log(error);

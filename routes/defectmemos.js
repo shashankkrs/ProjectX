@@ -1,5 +1,6 @@
 const express=require('express');
 const DefectMemo=require('../model/defectmemo');
+// const Vehicle=require('../model/vehicle')
 const route=express.Router();
 
 
@@ -18,7 +19,9 @@ route.get('/vehicle/:vehicle_id',async(req,res)=>{
 // To Add Memo
 route.post('/add', async(req, res) => {
     try {
-        const newDefectMemo=await new DefectMemo(req.body);
+        console.log(req.body);
+        var newDefectMemo=await new DefectMemo(req.body);
+        console.log(newDefectMemo);
         newDefectMemo.save();
         if (newDefectMemo) {
             res.send("New Memo Added");
@@ -44,7 +47,7 @@ route.get('/', async(req, res) => {
 route.get('/:id', async(req, res) => {
     try {
         const memoID=req.params.id;
-        const foundDefect=await DefectMemo.findById(memoID);
+        let foundDefect=await DefectMemo.findById(memoID).populate('vehicle_id','vehicle_type');
         res.send(foundDefect);
     } catch (error) {
         console.log(error);
