@@ -16,13 +16,14 @@ const port = process.env.PORT || 3000
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(cookieParser());
 app.use(cors({
+  origin:true,
   credentials:true
 }));
 
 //Importing User Model
 const User=require('./model/user');
 
-//Importing Routes
+//Importing Routeshttps://github.com/weaponxwolf/projectxnext.git
 const vehicleRoute=require('./routes/vehicles');
 const JobCardRoute=require('./routes/job_card');
 const driverRoute=require('./routes/drivers');
