@@ -13,7 +13,7 @@ const app = express()
 const port = process.env.PORT || 3000
 
 //Using Important Middlewares
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(cookieParser());
 app.use(cors({
@@ -72,6 +72,7 @@ app.post('/register',async(req,res)=>{
 //Login User
 app.post('/login',async(req,res)=>{
   try {
+    console.log(req.body);
     const foundUser=await User.findOne({
       username :req.body.username
     });
