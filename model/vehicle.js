@@ -3,6 +3,7 @@ const mongoose=require('mongoose');
 // * * Vehicle elements
 const vehicleSchema=mongoose.Schema({
     registration_no : String,
+    vehicle_no:String,
     vehicle_type :String,
     chasis_no :Number,
     engine_no:Number,

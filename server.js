@@ -72,7 +72,7 @@ app.post('/register',async(req,res)=>{
 //Login User
 app.post('/login',async(req,res)=>{
   try {
-    console.log(req.body);
+    // console.log(req.body);
     const foundUser=await User.findOne({
       username :req.body.username
     });
