@@ -30,7 +30,7 @@ const JobCardRoute=require('./routes/job_card');
 const driverRoute=require('./routes/drivers');
 const dutyLogRoute=require('./routes/duty_log');
 const defectMemoRoute=require('./routes/defectmemos');
-
+const userRoute=require('./routes/users');
 //Defining Functions
 const isLoggedIn=async(req,res,next)=>{
   try {
@@ -96,6 +96,7 @@ app.post('/login',async(req,res)=>{
 });
 
 //Using Routes
+app.use('/users',isLoggedIn,userRoute);
 app.use('/vehicles',isLoggedIn,vehicleRoute);
 app.use('/job_card',isLoggedIn,JobCardRoute);
 app.use('/duty_log',isLoggedIn,dutyLogRoute);
