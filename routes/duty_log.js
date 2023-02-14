@@ -5,7 +5,7 @@ const route= express.Router();
 //To Find Duty Log
 route.get('/', async(req, res) => {
     try {
-        const dutyLog=await Duty_Log.find();
+        const dutyLog=await Duty_Log.find().populate('vehicle_id');
         res.send(dutyLog);
     } catch (error) {
         console.log(error);

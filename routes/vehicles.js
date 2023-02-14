@@ -13,6 +13,7 @@ route.get('/', async(req, res) => {
 
 route.post('/add', async(req, res) => {
     try {
+        console.log(req.body);
         const newVehicle=await new Vehicle(req.body);
         newVehicle.save();
         if (newVehicle) {

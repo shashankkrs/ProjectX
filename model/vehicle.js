@@ -1,18 +1,82 @@
 const mongoose=require('mongoose');
+const {Schema}=require('mongoose')
 
 // * * Vehicle elements
 const vehicleSchema=mongoose.Schema({
-    registration_no : String,
     vehicle_no:String,
-    vehicle_type :String,
-    chasis_no :Number,
-    engine_no:Number,
-    crp_no:Number,
+    vehicle_sl_no:String,
+    name: String,
+    registration_no: String,
+    year_of_manufacture: Number,
+    vehicle_type:String,
+    no_of_wheels:Number,
+    costofvehicle:Number,
+    destination:String,
+    date_of_supply:Date,
+    chasis: String,
+    engine:String,
     no_of_cylinders:Number,
     horse_power:Number,
-    size_of_sparking_plug:String,
-    Rank:String,
-    date_of_service:Number
+    spark_plug_size:String,
+    tappet:String,
+    circuit_breaker:String,
+    firing_order:String,
+    wheel_base:String,
+    body_type:String,
+    front:String,
+    tyre_size:String,
+    front_tyre_pressure:String,
+    rear_tyre_pressure:String,
+    battery_type:String,
+    battery_volt:String,
+    battery_no:String,
+    date_of_service:Date,
+    first_overhaul:String,
+    distance_before_first_overhaul:String,
+    date_of_first_overhaul:Date,
+    second_overhaul:String,
+    distance_before_second_overhaul:String,
+    date_of_second_overhaul:Date,
+    health_score:{ 
+       type:Number,
+       default:0
+    },
+    is_assigned:{ 
+       type:Boolean,
+    },
+    totalkilom:{
+       type:Number,
+       default:0
+    },
+    fuelatp:{
+       type:Number,
+       default:0
+    },
+    totalfuelused:{
+       type:Number,
+       default:0
+    },
+    kmpl:{
+       type:Number,
+       default:10
+    },
+    category:{type:String,default:'LMV'},
+    fuels:[{
+       type: Schema.Types.ObjectId,
+       ref:'fuel'
+    }],
+    missions:[{
+       type: Schema.Types.ObjectId,
+       ref:'duties'
+    }],
+    jobCards:[{
+       type :Schema.Types.ObjectId,
+       ref:'job_cards'
+    }],
+    defectMemos:[{
+       type :Schema.Types.ObjectId,
+       ref:'defect_memo'
+    }]
 });
 
 const vehicleModel=mongoose.model('vehicles',vehicleSchema);
