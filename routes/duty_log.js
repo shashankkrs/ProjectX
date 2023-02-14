@@ -5,7 +5,8 @@ const route= express.Router();
 //To Find Duty Log
 route.get('/', async(req, res) => {
     try {
-        const dutyLog=await Duty_Log.find();
+        const dutyLog=await Duty_Log.find().populate('vehicle_id');
+        console.log(dutyLog);
         res.send(dutyLog);
     } catch (error) {
         console.log(error);
@@ -16,7 +17,7 @@ route.get('/', async(req, res) => {
 route.get('/:id', async(req, res) => {
     try {
         const dutyID=req.params.id;
-        const foundDuty=await Duty_Log.findById(dutyID);
+        const foundDuty=await Duty_Log.findById(dutyID).populate('vehicle_id');
         res.send(foundDuty);
     } catch (error) {
         console.log(error);
@@ -24,19 +25,21 @@ route.get('/:id', async(req, res) => {
 });
 
 // To Find Duty Log By Vehicle ID
-route.get('/vehicle/:vehicle_id', async(req, res) => {
-    try {
-        const vehicleID=req.params.vehicle_id;
-        const foundVehicleDutyLog=await Duty_Log.find({vehicle_id:vehicleID});
-        res.send(foundVehicleDutyLog);
-    } catch (error) {
-        console.log(error);
-    }
-});
+// route.get('/:vehicle_id', async(req, res) => {
+//     try {
+//         console.log(req.params);
+//         const vehicleID=req.params.vehicle_id;
+//         const foundVehicleDutyLog=await Duty_Log.find({vehicle_id:vehicleID});
+//         res.send(foundVehicleDutyLog);
+//     } catch (error) {
+//         console.log(error);
+//     }
+// });
 
 //To Add New Duty Log
 route.post('/add', async(req, res) =>{
     try {
+        console.log(req.body);
         const newDutyLog=await new Duty_Log(req.body);
         newDutyLog.save();
         if(newDutyLog){

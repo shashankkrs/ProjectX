@@ -5,6 +5,7 @@ const vehicleSchema=mongoose.Schema({
     registration_no : String,
     vehicle_no:String,
     vehicle_type :String,
+    vehicle_serial_no :String,
     chasis_no :Number,
     engine_no:Number,
     crp_no:Number,

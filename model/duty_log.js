@@ -1,7 +1,10 @@
 const mongoose=require('mongoose');
 
 const dutyLogSchema=mongoose.Schema({
-    vehicle_id: mongoose.Schema.Types.ObjectId,
+    vehicle_id: {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'vehicles'
+    },
     date :Date,
     indent_no : String,
     out_time : Date,
