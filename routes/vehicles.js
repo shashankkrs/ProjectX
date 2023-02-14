@@ -28,6 +28,7 @@ route.post('/add', async(req, res) => {
 route.get('/:id', async(req, res) => {
     try {
         const vehicleID=req.params.id;
+        console.log(vehicleID);
         const foundVehicle=await Vehicle.findById(vehicleID);
         res.send(foundVehicle);
     } catch (error) {
