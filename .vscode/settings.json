@@ -1,3 +1,4 @@
 {
-    "vscode-blur-linux.blur": true
+    "vscode-blur-linux.blur": true,
+    "vscode-blur-linux.opacity": 80
 }

@@ -1,6 +1,7 @@
 const express = require('express');
 const User= require('../model/user');
 const route = express.Router();
+const bcrypt=require('bcrypt')
 
 // To Find Users
 route.get('/', async(req, res) => {
@@ -16,13 +17,31 @@ route.get('/', async(req, res) => {
 // To Add Users
 route.post('/add', async(req, res) => {
     try {
-        const newUser=await new User(req.body);
-        newUser.save();
-        if (newUser) {
-            res.send("New User Added");
+        const {username,password,contact_no,email_id,rank,user_registration_no}=req.body;
+        const foundUser=await User.findOne({username:username});
+        if (foundUser) {
+          res.send("USERNAME ALREADY TAKEN");
         }else{
-            res.send("No User Added");
+          const salt = bcrypt.genSaltSync(10);
+          const hash = bcrypt.hashSync(password, salt);
+          const newUser=await new User({
+            username:username,
+            password:hash,
+            contact_no:contact_no,
+            email_id:email_id,
+            rank:rank,
+            user_registration_no:user_registration_no
+          });
+          newUser.save();
+          res.send("NEW USER CREATED")
         }
+        // const newUser=await new User(req.body);
+        // newUser.save();
+        // if (newUser) {
+        //     res.send("New User Added");
+        // }else{
+        //     res.send("No User Added");
+        // }
     } catch (error) {
         console.log(error);
     }
