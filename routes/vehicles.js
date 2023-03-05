@@ -35,5 +35,15 @@ route.get('/:id', async(req, res) => {
         console.log(error);
     }
 });
+route.get('/get_vehicle/:vehicle_no', async(req, res) => {
+    try {
+        const vehicleID=req.params.vehicle_no;
+        console.log(vehicleID);
+        const foundVehicle=await Vehicle.find({vehicle_no:vehicleID});
+        res.send(foundVehicle);
+    } catch (error) {
+        console.log(error);
+    }
+});
 
 module.exports=route;
