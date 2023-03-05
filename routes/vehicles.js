@@ -11,8 +11,23 @@ route.get('/', async(req, res) => {
     }
 });
 
+route.post('/sl_no', async(req, res) => {   
+    try {
+        const vehicle=await Vehicle.findOne({vehicle_sl_no:req.body.sl_no});
+        if (vehicle) {
+            res.send("F");
+        }else{
+            res.send("NF");
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+
 route.post('/add', async(req, res) => {
     try {
+        console.log(req.body);
         const newVehicle=await new Vehicle(req.body);
         newVehicle.save();
         if (newVehicle) {
