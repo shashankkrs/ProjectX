@@ -47,7 +47,7 @@ route.put('/update/:id',async(req,res)=>{
      const updstatus=req.body.mission_ended;
      console.log(dutyId);
      console.log(updintime);
-     const foundDuty1=await Duty_Log.findByIdAndUpdate({_id:dutyId}, { $set:{ in_time: updintime} })
+     const foundDuty1=await Duty_Log.findByIdAndUpdate(dutyId, {in_time:updintime,mission_ended:updstatus });
        // res.send(foundDuty1);
        console.log((foundDuty1));
     } catch (error) {
