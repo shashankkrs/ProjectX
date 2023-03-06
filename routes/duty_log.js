@@ -40,5 +40,23 @@ route.post('/add', async(req, res) =>{
         console.log(error);
     }
 })
+route.put('/update/:id',async(req,res)=>{
+    try {
+     const dutyId=req.params.id;
+     const updintime=req.body.in_time;
+     const updstatus=req.body.mission_ended;
+     console.log(dutyId);
+     console.log(updintime);
+     const foundDuty1=await Duty_Log.findByIdAndUpdate({_id:dutyId}, { $set:{ in_time: updintime} })
+       // res.send(foundDuty1);
+       console.log((foundDuty1));
+    } catch (error) {
+        console.log(error);
+    }
+    
+    
+    
+    }
+)
 
 module.exports=route;
