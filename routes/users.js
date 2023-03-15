@@ -2,7 +2,7 @@ const express = require('express');
 const User= require('../model/user');
 const route = express.Router();
 const bcrypt=require('bcrypt')
-
+const jwt=require('jsonwebtoken')
 // To Find Users
 route.get('/', async(req, res) => {
     try {
@@ -47,6 +47,20 @@ route.post('/add', async(req, res) => {
     }
 });
 
+route.get('/get_user_details',async(req,res)=>{
+    try {
+        // console.log(req.cookies.token);
+        var decoded=await jwt.verify(req.cookies.token,process.env.JWT_SIGNATURE);
+        // console.log(decoded);
+        const user=decoded.userID;
+        const data=await User.findById(user);
+        // console.log(data);
+        res.send(data);
+    } catch (error) {
+        console.log(error);
+    }
+});
+
 // To Find Users by ID
 route.get('/:id', async(req, res) => {
     try {
@@ -57,5 +71,7 @@ route.get('/:id', async(req, res) => {
         console.log(error);
     }
 });
+
+
 
 module.exports = route;
