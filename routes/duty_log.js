@@ -12,6 +12,15 @@ route.get('/', async(req, res) => {
         console.log(error);
     }
 });
+route.get('/uncompleted', async(req, res) => {
+    try {
+        const dutyLog1=await Duty_Log.find({mission_ended: {$eq: false}}).populate('vehicle_id');
+        console.log(dutyLog1);
+        res.send(dutyLog1);
+    } catch (error) {
+        console.log(error);
+    }
+});
 
 //To Find Duty Log By Id
 route.get('/:id', async(req, res) => {
@@ -40,5 +49,26 @@ route.post('/add', async(req, res) =>{
         console.log(error);
     }
 })
+
+// update fields
+route.put('/update/:id',async(req,res)=>{
+    try {
+     const dutyId=req.params.id;
+     const updintime=req.body.in_time;
+     const updstatus=req.body.mission_ended;
+     console.log(dutyId);
+     console.log(updintime);
+     const foundDuty1=await Duty_Log.findByIdAndUpdate(dutyId, {in_time:updintime,mission_ended:updstatus });
+       res.send(foundDuty1);
+       console.log((foundDuty1));
+    } catch (error) {
+        console.log(error);
+    }
+    
+    
+    
+    }
+)
+
 
 module.exports=route;

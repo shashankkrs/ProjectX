@@ -15,7 +15,8 @@ const dutyLogSchema=mongoose.Schema({
     km_run : Number,
     meter_count : Number,
     approved_by_mto :Boolean,
-    fuel : Number
+    fuel : Number,
+    mission_ended:Boolean
 });
 
 module.exports=mongoose.model('duty_log',dutyLogSchema);
