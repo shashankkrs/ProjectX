@@ -27,7 +27,6 @@ route.post('/sl_no', async(req, res) => {
 
 route.post('/add', async(req, res) => {
     try {
-        console.log(req.body);
         const newVehicle=await new Vehicle(req.body);
         newVehicle.save();
         if (newVehicle) {
@@ -42,9 +41,7 @@ route.post('/add', async(req, res) => {
 
 route.get('/:id', async(req, res) => {
     try {
-        // console.log(req.body);
         const vehicleID=req.params.id;
-        // console.log(vehicleID);
         const foundVehicle=await Vehicle.findById(vehicleID);
         res.send(foundVehicle);
     } catch (error) {
@@ -54,7 +51,6 @@ route.get('/:id', async(req, res) => {
 route.get('/get_vehicle/:vehicle_no', async(req, res) => {
     try {
         const vehicleID=req.params.vehicle_no;
-        console.log(vehicleID);
         const foundVehicle=await Vehicle.find({vehicle_no:vehicleID});
         res.send(foundVehicle);
     } catch (error) {
