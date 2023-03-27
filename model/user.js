@@ -7,7 +7,8 @@ const userSchema=mongoose.Schema({
     contact_no:Number,
     email_id:String,
     rank:String,
-    role:String
+    role:String,
+    profile_pic : String
 });
 
 module.exports=mongoose.model('users',userSchema);

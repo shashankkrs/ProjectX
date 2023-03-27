@@ -20,6 +20,7 @@ app.use(cors({
   origin:true,
   credentials:true
 }));
+app.use(express.static('public'));
 
 //Importing User Model
 const User=require('./model/user');
