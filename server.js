@@ -29,12 +29,13 @@ app.use(
 const User = require("./model/user");
 
 //Importing Routeshttps://github.com/weaponxwolf/projectxnext.git
-const vehicleRoute = require("./routes/vehicles");
-const JobCardRoute = require("./routes/job_card");
-const driverRoute = require("./routes/drivers");
-const dutyLogRoute = require("./routes/duty_log");
-const defectMemoRoute = require("./routes/defectmemos");
-const userRoute = require("./routes/users");
+const vehicleRoute=require('./routes/vehicles');
+const JobCardRoute=require('./routes/job_card');
+const driverRoute=require('./routes/drivers');
+const dutyLogRoute=require('./routes/duty_log');
+const defectMemoRoute=require('./routes/defectmemos');
+const userRoute=require('./routes/users');
+const oilstockRegisterRoute=require('./routes/oilstockregister');
 //Defining Functions
 const isLoggedIn = async (req, res, next) => {
   try {
@@ -116,12 +117,13 @@ app.post("/login", async (req, res) => {
 });
 
 //Using Routes
-app.use("/users", isLoggedIn, userRoute);
-app.use("/vehicles", isLoggedIn, vehicleRoute);
-app.use("/job_card", isLoggedIn, JobCardRoute);
-app.use("/duty_log", isLoggedIn, dutyLogRoute);
-app.use("/drivers", isLoggedIn, driverRoute);
-app.use("/memo", isLoggedIn, defectMemoRoute);
+app.use('/users',isLoggedIn,userRoute);
+app.use('/vehicles',isLoggedIn,vehicleRoute);
+app.use('/job_card',isLoggedIn,JobCardRoute);
+app.use('/duty_log',isLoggedIn,dutyLogRoute);
+app.use('/drivers',isLoggedIn,driverRoute);
+app.use('/memo',isLoggedIn,defectMemoRoute);
+app.use('/oilstockregister',isLoggedIn,oilstockRegisterRoute);
 
 //Listening Express App
 app.listen(port, () => {
