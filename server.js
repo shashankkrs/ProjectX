@@ -32,6 +32,7 @@ const driverRoute=require('./routes/drivers');
 const dutyLogRoute=require('./routes/duty_log');
 const defectMemoRoute=require('./routes/defectmemos');
 const userRoute=require('./routes/users');
+const oilstockRegisterRoute=require('./routes/oilstockregister');
 //Defining Functions
 const isLoggedIn=async(req,res,next)=>{
   try {
@@ -103,6 +104,7 @@ app.use('/job_card',isLoggedIn,JobCardRoute);
 app.use('/duty_log',isLoggedIn,dutyLogRoute);
 app.use('/drivers',isLoggedIn,driverRoute);
 app.use('/memo',isLoggedIn,defectMemoRoute);
+app.use('/oilstockregister',isLoggedIn,oilstockRegisterRoute);
 
 //Listening Express App
 app.listen(port, () => {
