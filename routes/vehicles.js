@@ -11,6 +11,20 @@ route.get('/', async(req, res) => {
     }
 });
 
+route.post('/sl_no', async(req, res) => {   
+    try {
+        const vehicle=await Vehicle.findOne({vehicle_sl_no:req.body.sl_no});
+        if (vehicle) {
+            res.send("F");
+        }else{
+            res.send("NF");
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+
 route.post('/add', async(req, res) => {
     try {
         const newVehicle=await new Vehicle(req.body);
@@ -28,8 +42,16 @@ route.post('/add', async(req, res) => {
 route.get('/:id', async(req, res) => {
     try {
         const vehicleID=req.params.id;
-        console.log(vehicleID);
         const foundVehicle=await Vehicle.findById(vehicleID);
+        res.send(foundVehicle);
+    } catch (error) {
+        console.log(error);
+    }
+});
+route.get('/get_vehicle/:vehicle_no', async(req, res) => {
+    try {
+        const vehicleID=req.params.vehicle_no;
+        const foundVehicle=await Vehicle.find({vehicle_no:vehicleID});
         res.send(foundVehicle);
     } catch (error) {
         console.log(error);

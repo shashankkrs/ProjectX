@@ -11,7 +11,6 @@ const jobs_Card_Schema=mongoose.Schema({
     Issue_voucher_number:Number,
     Work_order_No:Number,
     CRP_No:String
-
 });
 const job_Card_Model=mongoose.model('job_card',jobs_Card_Schema)
 module.exports=job_Card_Model;

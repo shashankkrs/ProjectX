@@ -6,8 +6,17 @@ const route= express.Router();
 route.get('/', async(req, res) => {
     try {
         const dutyLog=await Duty_Log.find().populate('vehicle_id');
-        console.log(dutyLog);
+        // console.log(dutyLog);
         res.send(dutyLog);
+    } catch (error) {
+        console.log(error);
+    }
+});
+route.get('/uncompleted', async(req, res) => {
+    try {
+        const dutyLog1=await Duty_Log.find({mission_ended: {$eq: false}}).populate('vehicle_id');
+        console.log(dutyLog1);
+        res.send(dutyLog1);
     } catch (error) {
         console.log(error);
     }
@@ -23,18 +32,6 @@ route.get('/:id', async(req, res) => {
         console.log(error);
     }
 });
-
-// To Find Duty Log By Vehicle ID
-// route.get('/:vehicle_id', async(req, res) => {
-//     try {
-//         console.log(req.params);
-//         const vehicleID=req.params.vehicle_id;
-//         const foundVehicleDutyLog=await Duty_Log.find({vehicle_id:vehicleID});
-//         res.send(foundVehicleDutyLog);
-//     } catch (error) {
-//         console.log(error);
-//     }
-// });
 
 //To Add New Duty Log
 route.post('/add', async(req, res) =>{
@@ -52,5 +49,26 @@ route.post('/add', async(req, res) =>{
         console.log(error);
     }
 })
+
+// update fields
+route.put('/update/:id',async(req,res)=>{
+    try {
+     const dutyId=req.params.id;
+     const updintime=req.body.in_time;
+     const updstatus=req.body.mission_ended;
+     console.log(dutyId);
+     console.log(updintime);
+     const foundDuty1=await Duty_Log.findByIdAndUpdate(dutyId, {in_time:updintime,mission_ended:updstatus });
+       res.send(foundDuty1);
+       console.log((foundDuty1));
+    } catch (error) {
+        console.log(error);
+    }
+    
+    
+    
+    }
+)
+
 
 module.exports=route;
