@@ -4,7 +4,7 @@ const {Schema}=require('mongoose')
 // * * Vehicle elements
 const vehicleSchema=mongoose.Schema({
     vehicle_no:String,
-    vehicle_sl_no:Number,
+    vehicle_crp_no:Number,
     name: String,
     registration_no: String,
     year_of_manufacture: Number,
@@ -13,8 +13,13 @@ const vehicleSchema=mongoose.Schema({
     cost:Number,
     destination:String,
     date_of_supply:Date,
-    chasis_no: Number,
-    engine_no:Number,
+    front_view:String,
+    back_view:String,
+    right_view:String,
+    left_view:String,
+    top_view:String,
+    chasis_no: String,
+    engine_no:String,
     no_of_cylinders:Number,
     horse_power:Number,
     size_of_sparkling_plug:Number,
@@ -37,6 +42,10 @@ const vehicleSchema=mongoose.Schema({
     engine_second_overhaul:Number,
     distance_before_second_overhaul:Number,
     date_of_second_overhaul:Date,
+    deleted:{
+      type:Boolean,
+      default:false
+    },
     health_score:{ 
        type:Number,
        default:0

@@ -23,7 +23,7 @@ app.use(
     credentials: true,
   })
 );
-// app.use(express.static('public'));
+app.use(express.static('public'));
 
 //Importing User Model
 const User = require("./model/user");
@@ -52,13 +52,13 @@ const isLoggedIn = async (req, res, next) => {
   }
 };
 
-app.get("/images/profilepic/:imagepic", (req, res) => {
-  console.log(req.params.imagepic);
-  let x = req.params.imagepic;
-  if (x) {
-    res.sendFile(path.join(__dirname, "/public/images/profilepic", x));
-  }
-});
+// app.get("/images/profilepic/:imagepic", (req, res) => {
+//   console.log(req.params.imagepic);
+//   let x = req.params.imagepic;
+//   if (x) {
+//     res.sendFile(path.join(__dirname, "/public/images/profilepic", x));
+//   }
+// });
 
 //Register User
 app.post("/register", async (req, res) => {
