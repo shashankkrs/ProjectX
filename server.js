@@ -38,6 +38,7 @@ const userRoute=require('./routes/users');
 const oilstockRegisterRoute=require('./routes/oilstockregister');
 const inventoryRoute=require('./routes/inventory.js');
 
+
 //Defining Functions
 const isLoggedIn = async (req, res, next) => {
   try {
