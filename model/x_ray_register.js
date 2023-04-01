@@ -1,24 +1,24 @@
 const mongoose = require("mongoose");
 
-const x_ray_register_Schema = mongoose.Schema({
+const xRayRegisterSchema = mongoose.Schema({
   vehicle_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "vehicles",
   },
-  Date: Date,
-  Registration_No: String,
+  date: Date,
+  registration_no: String,
   vehicle_type: String,
-  CRP_No: Number,
-  Duty: String,
-  Bill_No: Number,
-  Kilometers: Number,
-  Amount: Number,
-  HC_Remarks: Boolean,
-  MT_Remarks: Boolean,
-  MTO_Remarks: Boolean,
+  crp_no: Number,
+  duty: String,
+  bill_no: Number,
+  kilometers: Number,
+  amount: Number,
+  hc_remarks: Boolean,
+  mt_remarks: Boolean,
+  mto_remarks: Boolean,
 });
-const x_ray_register_Model = mongoose.model(
-  "x_ray_register",
-  x_ray_register_Schema
+const xRayRegister_Model = mongoose.model(
+  "xRayRegister",
+  xRayRegisterSchema
 );
-module.exports = x_ray_register_Model;
+module.exports = xRayRegister_Model;

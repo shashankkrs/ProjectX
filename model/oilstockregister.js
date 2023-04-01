@@ -11,6 +11,7 @@ const oilregister_schema = mongoose.Schema({
   signature_of_pol_havaldar: Boolean,
   signature_of_mto: Boolean,
   remarks: String,
+  vehicle_id:String,
 });
 const oilregister_Model = mongoose.model(
   "oilstockregister",

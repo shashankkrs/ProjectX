@@ -1,5 +1,5 @@
 const express=require('express');
-const Job_Card=require('../model/job');
+const Job_Card=require('../model/jobcard');
 const route=express.Router();
 
 //All Job Cards

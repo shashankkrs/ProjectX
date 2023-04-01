@@ -1,9 +1,6 @@
 const express=require('express');
 const DefectMemo=require('../model/defectmemo');
-// const Vehicle=require('../model/vehicle')
 const route=express.Router();
-
-
 
 // To Search Memo By Vehicle Id
 route.get('/vehicle/:vehicle_id',async(req,res)=>{

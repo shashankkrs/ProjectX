@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const vehicle_daily_running_Schema = mongoose.Schema({
+const vehicleDailyRunningSchema = mongoose.Schema({
   vehicle_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "vehicles",
@@ -12,14 +12,14 @@ const vehicle_daily_running_Schema = mongoose.Schema({
   duty_order_no: Number,
   training_kilometers_run: Number,
   regimental_duty_kilometers_run: Number,
-  General_Duty_kilometers_Run: Number,
-  Final_Kilometer: Number,
-  Motor_Spirit_Drawn_Litres: Number,
-  No_Litres: Number,
-  Remarks: Boolean,
+  general_duty_kilometers_run: Number,
+  final_kilometer: Number,
+  motor_spirit_drawn_litres: Number,
+  no_litres: Number,
+  remarks: Boolean,
 });
-const vehicle_daily_running_Model = mongoose.model(
-  "vehicle_daily_running",
-  vehicle_daily_running_Schema
+const vehicleDailyRunning_Model = mongoose.model(
+  "vehicleDailyRunning",
+  vehicleDailyRunningSchema
 );
-module.exports = vehicle_daily_running_Model;
+module.exports = vehicleDailyRunning_Model;
