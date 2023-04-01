@@ -131,7 +131,7 @@ route.get("/:id", async (req, res) => {
 
 route.put("/update/:id", async (req, res) => {
   try {
-    console.log("ABD");
+    // console.log("ABD");
     const userId = req.params.id;
     const upd_in_name = req.body.username;
     const upd_in_role = req.body.role;
@@ -139,15 +139,47 @@ route.put("/update/:id", async (req, res) => {
     const upd_in_phone_no = req.body.contact_no;
     const upd_in_email_id = req.body.email_id;
 
-    console.log(userId);
-    console.log(req);
+    
+    sampleFile=req.files.photo
+    console.log("done");
+    
+    var ext;
+    switch (sampleFile.mimetype) {
+        case "image/gif":
+          ext = ".gif";
+          break;
+        case "image/jpeg":
+          ext = ".jpeg";
+          break;
+        case "image/png":
+          ext = ".png";
+          break;
+        default:
+          ext = "";
+          break;
+      }
+
+       var profile_pic_id = uuid();
+       let uploadPath =
+        __dirname + "/../public/images/profilepic/" + profile_pic_id + ext;
+         mime.getExtension(sampleFile);
+         sampleFile.mv(uploadPath);
+
+
+
+    // console.log(userId);
+    // console.log(req);
+    // console.log("done");
+
     const foundUser = await User.findByIdAndUpdate(userId, {
       username: upd_in_name,
       role: upd_in_role,
       rank: upd_in_rank,
       contact_no: upd_in_phone_no,
       email_id: upd_in_email_id,
+      profile_pic: profile_pic_id+ext,
     });
+    
     res.send(foundUser);
     console.log(foundUser);
   } catch (error) {

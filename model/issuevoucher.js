@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const issueVoucherSchema = mongoose.Schema({
     sl_no : Number,
     items : String,
+    // items should be an array
+
     vehicle_reg_no : String,
     vehicle_type : String,
     quantity : Number,
@@ -13,7 +15,7 @@ const issueVoucherSchema = mongoose.Schema({
             return this.rate * this.quantity;
         }
     },
-    issueVoucherNo: Number,
+    issueVoucherNo: String,
     station : String,
     date : Date
 });
