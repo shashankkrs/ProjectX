@@ -1,11 +1,11 @@
 const express = require("express");
-const oilstockRegister = require("../model/oilstockregister");
+const oilBalance = require("../model/oilbalance");
 const route = express.Router();
 
 route.get("/", async (req, res) => {
   try {
-    const oilstockregister = await oilstockRegister.find();
-    res.send(oilstockregister);
+    const oilbalance = await oilBalance.find().populate('');
+    res.send(oilbalance);
   } catch (error) {
     console.log(error);
   }
@@ -13,10 +13,10 @@ route.get("/", async (req, res) => {
 
 route.post("/add", async (req, res) => {
   try {
-    const new_oilstockregister = await new oilstockRegister(req.body);
-    new_oilstockregister.save();
+    const new_oilbalance = await new oilBalance(req.body);
+    new_oilbalance.save();
     console.log(req.body);
-    if (new_oilstockregister) {
+    if (new_oilbalance) {
       res.send("Sucessfully addeed");
     } else {
       res.send("Unable to add");
