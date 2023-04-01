@@ -36,6 +36,8 @@ const dutyLogRoute=require('./routes/duty_log');
 const defectMemoRoute=require('./routes/defectmemos');
 const userRoute=require('./routes/users');
 const oilstockRegisterRoute=require('./routes/oilstockregister');
+const inspectionRoute=require('./routes/inspection');
+
 //Defining Functions
 const isLoggedIn = async (req, res, next) => {
   try {
@@ -124,6 +126,7 @@ app.use('/duty_log',isLoggedIn,dutyLogRoute);
 app.use('/drivers',isLoggedIn,driverRoute);
 app.use('/memo',isLoggedIn,defectMemoRoute);
 app.use('/oilstockregister',isLoggedIn,oilstockRegisterRoute);
+app.use('/inspection',isLoggedIn,inspectionRoute);
 
 //Listening Express App
 app.listen(port, () => {
