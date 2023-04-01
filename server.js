@@ -122,7 +122,7 @@ app.use('/vehicles',isLoggedIn,vehicleRoute);
 app.use('/job_card',isLoggedIn,JobCardRoute);
 app.use('/duty_log',isLoggedIn,dutyLogRoute);
 app.use('/drivers',isLoggedIn,driverRoute);
-app.use('/memo',isLoggedIn,defectMemoRoute);
+app.use('/defectmemos',isLoggedIn,defectMemoRoute);
 app.use('/oilstockregister',isLoggedIn,oilstockRegisterRoute);
 
 //Listening Express App
