@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const motor_spirit_summmary_Schema = mongoose.Schema({
+const motorSpiritSummmarySchema = mongoose.Schema({
   vehicle_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "vehicles",
@@ -12,8 +12,8 @@ const motor_spirit_summmary_Schema = mongoose.Schema({
   total_running_KM_for_month: Number,
   average_KM_per_litre: Number,
 });
-const motor_spirit_summmary_Model = mongoose.model(
-  "motor_spirit_summmary",
-  motor_spirit_summmary_Schema
+const motorSpiritSummmary_Model = mongoose.model(
+  "motorSpiritSummmary",
+  motorSpiritSummmarySchema
 );
-module.exports = motor_spirit_summmary_Model;
+module.exports = motorSpiritSummmary_Model;
