@@ -13,7 +13,7 @@ const expenseVoucherSchema = mongoose.Schema({
             return this.rate * this.quantity;
         }
     },
-    expenseVoucherNo: Number,
+    expenseVoucherNo: String,
     station : String,
     date : Date
 });
