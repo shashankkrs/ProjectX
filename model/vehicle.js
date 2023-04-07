@@ -53,15 +53,19 @@ const vehicleSchema=mongoose.Schema({
     is_assigned:{ 
        type:Boolean,
     },
-    totalkilom:{
+    total_kilo_meter:{
        type:Number,
        default:0
     },
-    fuelatp:{
+    fuel:{
        type:Number,
        default:0
     },
-    totalfuelused:{
+    fuel_capacity:{
+      type:Number,
+      default:0
+   },
+    total:{
        type:Number,
        default:0
     },
