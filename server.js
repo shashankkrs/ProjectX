@@ -128,7 +128,6 @@ app.use('/drivers',isLoggedIn,driverRoute);
 app.use('/defectmemos',isLoggedIn,defectMemoRoute);
 app.use('/oilstockregister',isLoggedIn,oilstockRegisterRoute);
 app.use('/inventory',isLoggedIn,inventoryRoute);
-
 app.use('/inspection',isLoggedIn,inspectionRoute);
 
 //Listening Express App

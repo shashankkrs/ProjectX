@@ -4,7 +4,7 @@ const route = express.Router();
 
 route.get("/", async (req, res) => {
   try {
-    const oilbalance = await oilBalance.find().populate('');
+    const oilbalance = await oilBalance.find().populate('balance_id');
     res.send(oilbalance);
   } catch (error) {
     console.log(error);

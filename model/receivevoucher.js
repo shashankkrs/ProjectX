@@ -13,7 +13,7 @@ const receiveVoucherSchema = mongoose.Schema({
             return this.rate * this.quantity;
         }
     },
-    receiveVoucherNo: Number,
+    receiveVoucherNo: String,
     station : String,
     date : Date
 });
