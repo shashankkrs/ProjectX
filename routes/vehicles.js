@@ -32,13 +32,14 @@ route.post("/crp_no", async (req, res) => {
 
 route.post("/:id/delete", async (req, res) => {
   try {
-    const vehicle = await Vehicle.findOneAndUpdate(
-      { _id: req.params.id },
-      {
-        deleted: true,
-        vehicle_crp_no: 0,
-      }
-    );
+    // const vehicle = await Vehicle.findOneAndUpdate(
+    //   { _id: req.params.id },
+    //   {
+    //     deleted: true,
+    //     vehicle_crp_no: 0,
+    //   }
+    // );
+    const vehicle = await Vehicle.findByIdAndDelete(req.params.id);
     if (vehicle) {
       res.send("F");
     } else {
