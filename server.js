@@ -37,7 +37,7 @@ const defectMemoRoute=require('./routes/defectmemos');
 const userRoute=require('./routes/users');
 const oilstockRegisterRoute=require('./routes/oilstockregister');
 const inventoryRoute=require('./routes/inventory.js');
-
+const oilbalanceRoute=require('./routes/oilbalance')
 const inspectionRoute=require('./routes/inspection');
 
 //Defining Functions
@@ -129,8 +129,8 @@ app.use('/drivers',isLoggedIn,driverRoute);
 app.use('/defectmemos',isLoggedIn,defectMemoRoute);
 app.use('/oilstockregister',isLoggedIn,oilstockRegisterRoute);
 app.use('/inventory',isLoggedIn,inventoryRoute);
-
-app.use('/inspection',isLoggedIn,inspectionRoute);
+app.use('/inventory',isLoggedIn,inventoryRoute);
+app.use('/oilbalance',isLoggedIn,oilbalanceRoute);
 
 //Listening Express App
 app.listen(port, () => {
