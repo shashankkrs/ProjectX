@@ -4,8 +4,18 @@ const route = express.Router();
 
 route.get("/", async (req, res) => {
   try {
-    const oilbalance = await oilBalance.find().populate('');
+    const oilbalance = await oilBalance.find().populate('balance_id').sort({Date:-1});
     res.send(oilbalance);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+route.get("/last", async (req, res) => {
+  try {
+    const oilbalance = await oilBalance.find().populate('balance_id').sort({Date:-1}).limit(1);
+    const [lastoil,others]=oilbalance;
+    res.send(lastoil);
   } catch (error) {
     console.log(error);
   }

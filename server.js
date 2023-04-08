@@ -28,7 +28,7 @@ app.use(express.static('public'));
 //Importing User Model
 const User = require("./model/user");
 
-//Importing Routeshttps://github.com/weaponxwolf/projectxnext.git
+//Importing Routes 
 const vehicleRoute=require('./routes/vehicles');
 const JobCardRoute=require('./routes/job_card');
 const driverRoute=require('./routes/drivers');
@@ -37,6 +37,8 @@ const defectMemoRoute=require('./routes/defectmemos');
 const userRoute=require('./routes/users');
 const oilstockRegisterRoute=require('./routes/oilstockregister');
 const inventoryRoute=require('./routes/inventory.js');
+const oilbalanceRoute=require('./routes/oilbalance')
+const inspectionRoute=require('./routes/inspection');
 
 //Defining Functions
 const isLoggedIn = async (req, res, next) => {
@@ -127,7 +129,8 @@ app.use('/drivers',isLoggedIn,driverRoute);
 app.use('/defectmemos',isLoggedIn,defectMemoRoute);
 app.use('/oilstockregister',isLoggedIn,oilstockRegisterRoute);
 app.use('/inventory',isLoggedIn,inventoryRoute);
-
+app.use('/inventory',isLoggedIn,inventoryRoute);
+app.use('/oilbalance',isLoggedIn,oilbalanceRoute);
 
 //Listening Express App
 app.listen(port, () => {
