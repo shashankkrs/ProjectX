@@ -28,7 +28,7 @@ app.use(express.static('public'));
 //Importing User Model
 const User = require("./model/user");
 
-//Importing Routeshttps://github.com/weaponxwolf/projectxnext.git
+//Importing Routes 
 const vehicleRoute=require('./routes/vehicles');
 const JobCardRoute=require('./routes/job_card');
 const driverRoute=require('./routes/drivers');
