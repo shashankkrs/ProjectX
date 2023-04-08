@@ -8,9 +8,14 @@ route.use(fileUpload());
 
 route.get("/", async (req, res) => {
   try {
-    const vehicleList = await Vehicle.find({
-      deleted: false,
-    });
+    const vehicleList = await Vehicle.find(
+      {
+        deleted: false,
+      },
+      {
+        fuel_log: 0,
+      }
+    );
     res.send(vehicleList);
   } catch (error) {
     console.log(error);
@@ -192,6 +197,51 @@ route.post("/add", async (req, res) => {
     } else {
       res.send("No Vehicle Added");
     }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+route.post("/:id/fuel_update", async (req, res) => {
+  try {
+    const vehicleID = req.params.id;
+    const foundVehicle = await Vehicle.findOne({ _id: vehicleID });
+    if (foundVehicle) {
+      if (foundVehicle.fuel_capacity >= parseFloat(req.body.fuel)) {
+        foundVehicle.fuel_log.push({
+          current_fuel: req.body.fuel,
+          fuel_diff: parseFloat(req.body.fuel) - foundVehicle.fuel,
+          date: Date.now(),
+        });
+
+        foundVehicle.fuel = req.body.fuel;
+        foundVehicle.save();
+        res.send("UPDATED");
+      } else {
+        res.send("ABOVE VEHICLE CAPACITY");
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+route.post("/:id/update_km_run", async (req, res) => {
+  try {
+    const vehicleID = req.params.id;
+    const foundVehicle = await Vehicle.findOneAndUpdate(
+      { _id: vehicleID },
+      {
+        total_kilo_meter: req.body.km,
+      }
+    );
+    foundVehicle.odometer_log.push({
+      km_run: req.body.km,
+      km_diff: parseFloat(req.body.km) - foundVehicle.total_kilo_meter,
+      date: Date.now(),
+    });
+    foundVehicle.save();
+    res.send("UPDATED");
   } catch (error) {
     console.log(error);
   }
