@@ -12,6 +12,31 @@ const cors = require("cors");
 //Creating Express App
 const app = express();
 const port = process.env.PORT || 3000;
+const server = require("http").createServer(app);
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+  },
+});
+
+io.use(async (socket, next) => {
+  try {
+    let token;
+    if (socket.handshake.query.token) {
+      token = socket.handshake.query.token;
+    } else {
+      token = socket.handshake.headers.cookie.split("=")[1];
+    }
+    var decoded = jwt.verify(token, process.env.JWT_SIGNATURE);
+    let foundUser = await User.findOne({ _id: decoded.userID });
+    if (foundUser) {
+      socket.user = foundUser;
+      next();
+    } else {
+      socket.close();
+    }
+  } catch (error) {}
+});
 
 //Using Important Middlewares
 app.use(bodyParser.json());
@@ -23,22 +48,23 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.static('public'));
+app.use(express.static("public"));
 
 //Importing User Model
 const User = require("./model/user");
 
-//Importing Routes 
-const vehicleRoute=require('./routes/vehicles');
-const JobCardRoute=require('./routes/job_card');
-const driverRoute=require('./routes/drivers');
-const dutyLogRoute=require('./routes/duty_log');
-const defectMemoRoute=require('./routes/defectmemos');
-const userRoute=require('./routes/users');
-const oilstockRegisterRoute=require('./routes/oilstockregister');
-const inventoryRoute=require('./routes/inventory.js');
-const oilbalanceRoute=require('./routes/oilbalance')
-const inspectionRoute=require('./routes/inspection');
+//Importing Routes
+const vehicleRoute = require("./routes/vehicles");
+const JobCardRoute = require("./routes/job_card");
+const driverRoute = require("./routes/drivers");
+const dutyLogRoute = require("./routes/duty_log");
+const defectMemoRoute = require("./routes/defectmemos");
+const userRoute = require("./routes/users");
+const oilstockRegisterRoute = require("./routes/oilstockregister");
+const inventoryRoute = require("./routes/inventory.js");
+const oilbalanceRoute = require("./routes/oilbalance");
+const inspectionRoute = require("./routes/inspection");
+const locationRoute = require("./routes/location");
 
 //Defining Functions
 const isLoggedIn = async (req, res, next) => {
@@ -47,7 +73,11 @@ const isLoggedIn = async (req, res, next) => {
     if (req.cookies.token) {
       var decoded = await jwt.verify(token, process.env.JWT_SIGNATURE);
       const loggedUser = await User.findOne({ _id: decoded.userID });
-      next();
+      if (loggedUser) {
+        next();
+      } else {
+        res.send("PLEASE LOG IN");
+      }
     } else {
       res.send("PLEASE LOG IN");
     }
@@ -55,14 +85,6 @@ const isLoggedIn = async (req, res, next) => {
     console.log(error);
   }
 };
-
-// app.get("/images/profilepic/:imagepic", (req, res) => {
-//   console.log(req.params.imagepic);
-//   let x = req.params.imagepic;
-//   if (x) {
-//     res.sendFile(path.join(__dirname, "/public/images/profilepic", x));
-//   }
-// });
 
 //Register User
 app.post("/register", async (req, res) => {
@@ -89,7 +111,6 @@ app.post("/register", async (req, res) => {
 //Login User
 app.post("/login", async (req, res) => {
   try {
-    // console.log(req.body);
     const foundUser = await User.findOne({
       username: req.body.username,
     });
@@ -108,7 +129,11 @@ app.post("/login", async (req, res) => {
             httpOnly: true,
             secure: false,
           })
-          .send("LOGGED IN");
+          .send({
+            status: 200,
+            message: "LOGGED IN",
+            token: token,
+          });
       } else {
         res.send("WRONG PASSWORD");
       }
@@ -120,19 +145,65 @@ app.post("/login", async (req, res) => {
   }
 });
 
+app.post("/checktoken", async (req, res) => {
+  try {
+    const token = req.body.token;
+    if (token) {
+      var decoded = await jwt.verify(token, process.env.JWT_SIGNATURE);
+      const loggedUser = await User.findOne(
+        {
+          _id: decoded.userID,
+        },
+        { password: 0 }
+      );
+      if (loggedUser) {
+        res.send({ status: 200, user: loggedUser });
+      } else {
+        res.send({ status: 400 });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 //Using Routes
-app.use('/users',isLoggedIn,userRoute);
-app.use('/vehicles',isLoggedIn,vehicleRoute);
-app.use('/job_card',isLoggedIn,JobCardRoute);
-app.use('/duty_log',isLoggedIn,dutyLogRoute);
-app.use('/drivers',isLoggedIn,driverRoute);
-app.use('/defectmemos',isLoggedIn,defectMemoRoute);
-app.use('/oilstockregister',isLoggedIn,oilstockRegisterRoute);
-app.use('/inventory',isLoggedIn,inventoryRoute);
-app.use('/inventory',isLoggedIn,inventoryRoute);
-app.use('/oilbalance',isLoggedIn,oilbalanceRoute);
+app.use("/users", isLoggedIn, userRoute);
+app.use("/vehicles", isLoggedIn, vehicleRoute);
+app.use("/job_card", isLoggedIn, JobCardRoute);
+app.use("/duty_log", isLoggedIn, dutyLogRoute);
+app.use("/drivers", isLoggedIn, driverRoute);
+app.use("/defectmemos", isLoggedIn, defectMemoRoute);
+app.use("/oilstockregister", isLoggedIn, oilstockRegisterRoute);
+app.use("/inventory", isLoggedIn, inventoryRoute);
+app.use("/inventory", isLoggedIn, inventoryRoute);
+app.use("/oilbalance", isLoggedIn, oilbalanceRoute);
+app.use("/location", locationRoute);
+
+//Socket.io
+io.on("connection", (socket) => {
+  console.log("Connected ID : " + socket.user.username);
+  socket.on("join_map", () => {
+    socket.join("map");
+  });
+  socket.on("disconnect", () => {
+    console.log("Disconnected ID : " + socket.user.username);
+  });
+  socket.on("location", (msg) => {
+    // console.log(msg);
+    let data = {
+      name: socket.user.username,
+      location: {
+        latitude: msg.coords.latitude,
+        longitude: msg.coords.longitude,
+      },
+    };
+    socket.to(socket.id).emit("location", data);
+    socket.in("map").emit("location", data);
+  });
+});
 
 //Listening Express App
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
 });

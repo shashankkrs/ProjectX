@@ -193,7 +193,11 @@ route.post("/add", async (req, res) => {
     const newVehicle = await new Vehicle(req.body);
     newVehicle.save();
     if (newVehicle) {
-      res.send("New Vehicle id Added");
+      res.send({
+        status: 200,
+        message: "New Vehicle is Added",
+        vehicle_id: newVehicle._id,
+      });
     } else {
       res.send("No Vehicle Added");
     }
