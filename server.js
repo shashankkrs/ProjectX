@@ -65,6 +65,7 @@ const inventoryRoute = require("./routes/inventory.js");
 const oilbalanceRoute = require("./routes/oilbalance");
 const inspectionRoute = require("./routes/inspection");
 const locationRoute = require("./routes/location");
+const receiveVoucherRoute = require("./model/receivevoucher");
 
 //Defining Functions
 const isLoggedIn = async (req, res, next) => {
@@ -178,6 +179,7 @@ app.use("/oilstockregister", isLoggedIn, oilstockRegisterRoute);
 app.use("/inventory", isLoggedIn, inventoryRoute);
 app.use("/inventory", isLoggedIn, inventoryRoute);
 app.use("/oilbalance", isLoggedIn, oilbalanceRoute);
+app.use('/receivevoucher',isLoggedIn,receiveVoucherRoute);
 app.use("/location", locationRoute);
 
 //Socket.io

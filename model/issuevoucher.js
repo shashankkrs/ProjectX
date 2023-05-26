@@ -1,23 +1,18 @@
 const mongoose = require('mongoose');
 
 const issueVoucherSchema = mongoose.Schema({
-    sl_no : Number,
-    items : String,
-    // items should be an array
-
-    vehicle_reg_no : String,
-    vehicle_type : String,
-    quantity : Number,
-    rate : Number,
-    amount : {
-        type: Number,
-        default: function(){
-            return this.rate * this.quantity;
-        }
-    },
-    issueVoucherNo: String,
+    receiveVoucherNo: String,
     station : String,
-    date : Date
+    date : Date,
+    items:[
+        {
+            name :String,
+            rate: Number,
+            quantity:Number,
+            amount:Number,
+            description:String
+        }
+    ]
 });
 
 const issueVoucherModel = mongoose.model('issuevoucher',issueVoucherSchema);
