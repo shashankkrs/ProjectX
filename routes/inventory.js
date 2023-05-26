@@ -4,29 +4,127 @@ const Issue = require("../model/issue.js");
 const Order = require("../model/order.js");
 const Item = require("../model/item.js");
 
+route.get("/order", async (req, res) => {
+  try {
+    const lastOrder = await Order.find().sort({ _id: -1 }).limit(1);
+
+    const temp = lastOrder[0].sno;
+    const lastsno = temp.toString();
+
+    res.send(lastsno);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+route.get("/all_orders", async (req, res) => {
+  try {
+    const orders = await Order.findOne().populate("items.item");
+    res.send(orders);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 
 
 route.post("/order/add", async (req, res) => {
   try {
-    console.log(req.body);
     const newOrder = await new Order(req.body);
+    const { items } = req.body;
+    items.forEach((item) => {
+      let id = item.item;
+      Item.findById(id).exec((err, found_item) => {
+        found_item.quantity = found_item.quantity + parseInt(item.quantity);
+        found_item.save();
+      });
+    });
     newOrder.save();
-    res.send("NEW ORDER CREATED");
+    res.send({
+      status: 200,
+      message: "NEW ORDER CREATED",
+      order_id: newOrder._id,
+    });
   } catch (error) {
     console.log(error);
   }
 });
 
-route.post("/issue/add",async(req,res)=>{
+route.get("/order/:id", async (req, res) => {
   try {
-    console.log(req.body);
-    const newIssue=await new Issue(req.body);
-    newIssue.save();
-    res.send("NEW ISSUE CREATED")
+    const order_id = req.params.id;
+    const foundOrder = await Order.findById(order_id).populate("items.item");
+    res.send(foundOrder);
   } catch (error) {
     console.log(error);
   }
 });
+
+route.post("/issue/add", async (req, res) => {
+  try {
+    console.log(req.body);
+    const newIssue = await new Issue(req.body);
+    newIssue.save();
+    res.send("NEW ISSUE CREATED");
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// to list out all the items
+
+route.get("/items", async (req, res) => {
+  try {
+    const itemList = await Item.find();
+    // console.log(itemList)
+    res.send(itemList);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+route.post("/items/add", async (req, res) => {
+  try {
+    console.log(req.body);
+    const { name, quantity, rate, description } = req.body;
+
+    const foundItem = await Item.findOne({ name: name });
+    if (foundItem) {
+      res.send("ITEM NAME ALREADY TAKEN");
+    } else {
+      const newItem = await new Item({
+        name: name,
+        quantity: quantity,
+        rate: rate,
+        description: description,
+      });
+      newItem.save();
+
+      res.send("NEW ITEM CREATED");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// to Find items by ID
+route.get("/items/:id", async (req, res) => {
+  try {
+    const itemID = req.params.id;
+    const foundItem = await Item.findById(itemID);
+    console.log(foundItem);
+    res.send(foundItem);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// to add Items by Id
+// route.post("/add")
+
+module.exports = route;
+
+// console.log(req.body);
 
 // to list out all the items
 route.get("/items", async (req, res) => {
@@ -72,61 +170,7 @@ route.get("/items/:id", async (req, res) => {
     res.send(foundItem);
   } catch (error) {
     console.log(error);
-  }XMLHttpRequest.handleError
-});
-
-// to add Items by Id
-// route.post("/add")
-
-module.exports = route;
-
-// console.log(req.body);
-
-// to list out all the items
-route.get("/items", async (req, res) => {
-try {
-const itemList = await Item.find();
-// console.log(itemList)
-res.send(itemList);
-} catch (error) {
-console.log(error);
-}
-});
-
-route.post("/items/add", async (req, res) => {
-try {
-console.log(req.body);
-const { name, quantity, rate, description } = req.body;
-
-const foundItem = await Item.findOne({ name: name });
-if (foundItem) {
-  res.send("ITEM NAME ALREADY TAKEN");
-} else {
-  const newItem = await new Item({
-    name: name,
-    quantity: quantity,
-    rate: rate,
-    description: description,
-  });
-  newItem.save();
-
-  res.send("NEW ITEM CREATED");
-}
-} catch (error) {
-console.log(error);
-}
-});
-
-// to Find items by ID
-route.get("/items/:id", async (req, res) => {
-try {
-const itemID = req.params.id;
-const foundItem = await Item.findById(itemID);
-console.log(foundItem);
-res.send(foundItem);
-} catch (error) {
-console.log(error);
-}
+  }
 });
 
 // to add Items by Id

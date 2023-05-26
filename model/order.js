@@ -1,18 +1,23 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
-const orderSchema=mongoose.Schema({
-    orderVoucherNo: String,
-    station : String,
-    date : Date,
-    items:[
-        {
-            name :String,
-            rate: Number,
-            quantity:Number,
-            amount:Number,
-            description:String
-        }
-    ]
+const orderSchema = mongoose.Schema({
+  sno: Number,
+  voucher_no: String,
+  // orderID: String,
+  station: String,
+  date: Date,
+  items: [
+    {
+      item: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "item",
+      },
+      rate: Number,
+      quantity: Number,
+      amount: Number,
+      description: String,
+    },
+  ],
 });
-const orderModel=mongoose.model('order',orderSchema);
+const orderModel = mongoose.model("order", orderSchema);
 module.exports = orderModel;
