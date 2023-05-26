@@ -39,6 +39,7 @@ const oilstockRegisterRoute=require('./routes/oilstockregister');
 const inventoryRoute=require('./routes/inventory.js');
 const oilbalanceRoute=require('./routes/oilbalance')
 const inspectionRoute=require('./routes/inspection');
+const receiveVoucherRoute = require("./model/receivevoucher");
 
 //Defining Functions
 const isLoggedIn = async (req, res, next) => {
@@ -131,6 +132,7 @@ app.use('/oilstockregister',isLoggedIn,oilstockRegisterRoute);
 app.use('/inventory',isLoggedIn,inventoryRoute);
 app.use('/inventory',isLoggedIn,inventoryRoute);
 app.use('/oilbalance',isLoggedIn,oilbalanceRoute);
+app.use('/receivevoucher',isLoggedIn,receiveVoucherRoute);
 
 //Listening Express App
 app.listen(port, () => {
