@@ -25,7 +25,6 @@ const upload = multer({ storage: storage });
 // To Find Users
 route.get("/", async (req, res) => {
   try {
-    // console.log(users);
     const userList = await User.find();
     res.send(userList);
   } catch (error) {
@@ -131,7 +130,6 @@ route.get("/:id", async (req, res) => {
 
 route.put("/update/:id", async (req, res) => {
   try {
-    // console.log("ABD");
     const userId = req.params.id;
     const upd_in_name = req.body.username;
     const upd_in_role = req.body.role;
@@ -139,12 +137,10 @@ route.put("/update/:id", async (req, res) => {
     const upd_in_phone_no = req.body.contact_no;
     const upd_in_email_id = req.body.email_id;
 
-    
-    sampleFile=req.files.photo
-    console.log("done");
-    
-    var ext;
-    switch (sampleFile.mimetype) {
+    if (req.files && req.files.photo) {
+      sampleFile = req.files.photo;
+      var ext;
+      switch (sampleFile.mimetype) {
         case "image/gif":
           ext = ".gif";
           break;
@@ -158,30 +154,30 @@ route.put("/update/:id", async (req, res) => {
           ext = "";
           break;
       }
-
-       var profile_pic_id = uuid();
-       let uploadPath =
+      var profile_pic_id = uuid();
+      let uploadPath =
         __dirname + "/../public/images/profilepic/" + profile_pic_id + ext;
-         mime.getExtension(sampleFile);
-         sampleFile.mv(uploadPath);
-
-
-
-    // console.log(userId);
-    // console.log(req);
-    // console.log("done");
-
-    const foundUser = await User.findByIdAndUpdate(userId, {
-      username: upd_in_name,
-      role: upd_in_role,
-      rank: upd_in_rank,
-      contact_no: upd_in_phone_no,
-      email_id: upd_in_email_id,
-      profile_pic: profile_pic_id+ext,
-    });
-    
-    res.send(foundUser);
-    console.log(foundUser);
+      mime.getExtension(sampleFile);
+      sampleFile.mv(uploadPath);
+      const foundUser = await User.findByIdAndUpdate(userId, {
+        name: upd_in_name,
+        role: upd_in_role,
+        rank: upd_in_rank,
+        contact_no: upd_in_phone_no,
+        email_id: upd_in_email_id,
+        profile_pic: profile_pic_id + ext,
+      });
+      res.send(foundUser);
+    } else {
+      const foundUser = await User.findByIdAndUpdate(userId, {
+        name: upd_in_name,
+        role: upd_in_role,
+        rank: upd_in_rank,
+        contact_no: upd_in_phone_no,
+        email_id: upd_in_email_id,
+      });
+      res.send(foundUser);
+    }
   } catch (error) {
     console.log(error);
   }

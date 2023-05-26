@@ -2,6 +2,7 @@ const mongoose=require('mongoose')
 
 const userSchema=mongoose.Schema({
     user_registration_no:String,
+    name:String,
     username:String,
     password :String,
     contact_no:Number,
