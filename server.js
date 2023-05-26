@@ -74,6 +74,7 @@ const isLoggedIn = async (req, res, next) => {
     if (req.cookies.token) {
       var decoded = await jwt.verify(token, process.env.JWT_SIGNATURE);
       const loggedUser = await User.findOne({ _id: decoded.userID });
+      console.log(loggedUser);
       if (loggedUser) {
         next();
       } else {
@@ -116,6 +117,7 @@ app.post("/login", async (req, res) => {
       username: req.body.username,
     });
     if (foundUser) {
+      console.log(foundUser);
       const isvalidUser = bcrypt.compareSync(
         req.body.password,
         foundUser.password
@@ -177,9 +179,8 @@ app.use("/drivers", isLoggedIn, driverRoute);
 app.use("/defectmemos", isLoggedIn, defectMemoRoute);
 app.use("/oilstockregister", isLoggedIn, oilstockRegisterRoute);
 app.use("/inventory", isLoggedIn, inventoryRoute);
-app.use("/inventory", isLoggedIn, inventoryRoute);
 app.use("/oilbalance", isLoggedIn, oilbalanceRoute);
-app.use('/receivevoucher',isLoggedIn,receiveVoucherRoute);
+app.use("/receivevoucher", isLoggedIn, receiveVoucherRoute);
 app.use("/location", locationRoute);
 
 //Socket.io
