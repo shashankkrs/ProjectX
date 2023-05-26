@@ -177,7 +177,7 @@ app.use("/drivers", isLoggedIn, driverRoute);
 app.use("/defectmemos", isLoggedIn, defectMemoRoute);
 app.use("/oilstockregister", isLoggedIn, oilstockRegisterRoute);
 app.use("/inventory", isLoggedIn, inventoryRoute);
-app.use("/inventory", isLoggedIn, inventoryRoute);
+// app.use("/inventory", isLoggedIn, inventoryRoute);
 app.use("/oilbalance", isLoggedIn, oilbalanceRoute);
 app.use('/receivevoucher',isLoggedIn,receiveVoucherRoute);
 app.use("/location", locationRoute);

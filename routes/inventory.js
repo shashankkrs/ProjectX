@@ -19,14 +19,12 @@ route.get("/order", async (req, res) => {
 
 route.get("/all_orders", async (req, res) => {
   try {
-    const orders = await Order.findOne().populate("items.item");
+    const orders = await Order.find().populate("items.item");
     res.send(orders);
   } catch (error) {
     console.log(error);
   }
 });
-
-
 
 route.post("/order/add", async (req, res) => {
   try {
@@ -60,18 +58,60 @@ route.get("/order/:id", async (req, res) => {
   }
 });
 
-route.post("/issue/add", async (req, res) => {
+route.get("/issue", async (req, res) => {
   try {
-    console.log(req.body);
-    const newIssue = await new Issue(req.body);
-    newIssue.save();
-    res.send("NEW ISSUE CREATED");
+    const lastIssue = await Issue.find().sort({ _id: -1 }).limit(1);
+
+    const temp = lastIssue[0].sno;
+    const lastsno = temp.toString();
+
+    res.send(lastsno);
+    // res.send('1');
   } catch (error) {
     console.log(error);
   }
 });
 
-// to list out all the items
+route.get("/all_issues", async (req, res) => {
+  try {
+    const issues = await Issue.find().populate("items.item");
+    res.send(issues);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+route.post("/issue/add", async (req, res) => {
+  try {
+    const newIssue = await new Issue(req.body);
+    const { items } = req.body;
+    items.forEach((item) => {
+      let id = item.item;
+      Item.findById(id).exec((err, found_item) => {
+        found_item.quantity = found_item.quantity + parseInt(item.quantity);
+        found_item.save();
+      });
+    });
+    newIssue.save();
+    res.send({
+      status: 200,
+      message: "NEW ISSUE CREATED",
+      issue_id: newIssue._id,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+route.get("/issue/:id", async (req, res) => {
+  try {
+    const issue_id = req.params.id;
+    const foundIssue = await Issue.findById(issue_id).populate("items.item");
+    res.send(foundIssue);
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 route.get("/items", async (req, res) => {
   try {
