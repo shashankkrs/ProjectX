@@ -50,8 +50,9 @@ const vehicleSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
-  is_assigned: {
+  available: {
     type: Boolean,
+    default: true,
   },
   total_kilo_meter: {
     type: Number,
@@ -60,7 +61,7 @@ const vehicleSchema = mongoose.Schema({
   odometer_log: [
     {
       km_run: Number,
-      km_diff:Number,
+      km_diff: Number,
       date: {
         type: Date,
         default: Date.now(),

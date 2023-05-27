@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const dutyLogSchema = mongoose.Schema({
-  vehicle_id: {
+  vehicle: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "vehicles",
   },
