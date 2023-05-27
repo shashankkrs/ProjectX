@@ -35,7 +35,6 @@ route.get("/", async (req, res) => {
 // To Add Users
 route.post("/add", async (req, res) => {
   try {
-    console.log(req.body);
     const {
       username,
       password,

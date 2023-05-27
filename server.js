@@ -74,7 +74,6 @@ const isLoggedIn = async (req, res, next) => {
     if (req.cookies.token) {
       var decoded = await jwt.verify(token, process.env.JWT_SIGNATURE);
       const loggedUser = await User.findOne({ _id: decoded.userID });
-      console.log(loggedUser);
       if (loggedUser) {
         next();
       } else {
@@ -117,7 +116,6 @@ app.post("/login", async (req, res) => {
       username: req.body.username,
     });
     if (foundUser) {
-      console.log(foundUser);
       const isvalidUser = bcrypt.compareSync(
         req.body.password,
         foundUser.password
@@ -185,12 +183,11 @@ app.use("/location", locationRoute);
 
 //Socket.io
 io.on("connection", (socket) => {
-  console.log("Connected ID : " + socket.user.username);
   socket.on("join_map", () => {
     socket.join("map");
   });
   socket.on("disconnect", () => {
-    console.log("Disconnected ID : " + socket.user.username);
+    // console.log("Disconnected ID : " + socket.user.username);
   });
   socket.on("location", (msg) => {
     // console.log(msg);
