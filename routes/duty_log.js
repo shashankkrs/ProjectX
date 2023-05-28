@@ -1,6 +1,8 @@
 const express = require("express");
 const Duty_Log = require("../model/duty_log");
 const Vehicle = require("../model/vehicle");
+const Driver = require("../model/driver");
+
 const route = express.Router();
 
 //To Find Duty Log
@@ -8,7 +10,7 @@ route.get("/", async (req, res) => {
   try {
     const dutyLog = await Duty_Log.find()
       .populate("vehicle")
-      .sort({ creation_date: -1 });
+      .sort({ indent_no: -1 });
     res.send(dutyLog);
   } catch (error) {
     console.log(error);
@@ -17,8 +19,12 @@ route.get("/", async (req, res) => {
 
 route.get("/last_indent_no", async (req, res) => {
   try {
-    const dutyLog = await Duty_Log.find().sort({ creation_date: -1 }).limit(1);
-    res.send(dutyLog[0].indent_no);
+    const dutyLog = await Duty_Log.find().sort({ indent_no: -1 }).limit(1);
+    if (dutyLog[0]) {
+      res.send(dutyLog[0].indent_no);
+    } else {
+      res.send("0");
+    }
   } catch (error) {
     console.log(error);
   }
@@ -39,7 +45,9 @@ route.get("/uncompleted", async (req, res) => {
 route.get("/:id", async (req, res) => {
   try {
     const dutyID = req.params.id;
-    const foundDuty = await Duty_Log.findById(dutyID).populate("vehicle");
+    const foundDuty = await Duty_Log.findById(dutyID)
+      .populate("vehicle")
+      .populate("driver");
     res.send(foundDuty);
   } catch (error) {
     console.log(error);
@@ -58,6 +66,17 @@ route.post("/add", async (req, res) => {
       } else {
         foundVehicle.available = true;
         foundVehicle.save();
+      }
+    }
+
+    const foundDriver = await Driver.findById(req.body.driver);
+    if (foundDriver) {
+      if (req.body.mission_ended === "false") {
+        foundDriver.available = false;
+        foundDriver.save();
+      } else {
+        foundDriver.available = true;
+        foundDriver.save();
       }
     }
     newDutyLog.save();
@@ -82,6 +101,29 @@ route.put("/update/:id", async (req, res) => {
       meter_count: meter_count,
       fuel: fuel,
     });
+
+    const foundVehicle = await Vehicle.findById(foundDuty.vehicle);
+    if (foundVehicle) {
+      if (req.body.mission_ended === "false") {
+        foundVehicle.available = false;
+        foundVehicle.save();
+      } else {
+        foundVehicle.available = true;
+        foundVehicle.save();
+      }
+    }
+
+    const foundDriver = await Driver.findById(foundDuty.driver);
+    if (foundDriver) {
+      if (req.body.mission_ended === "false") {
+        foundDriver.available = false;
+        foundDriver.save();
+      } else {
+        foundDriver.available = true;
+        foundDriver.save();
+      }
+    }
+
     res.send(foundDuty);
   } catch (error) {
     console.log(error);
