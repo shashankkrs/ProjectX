@@ -1,5 +1,12 @@
 const mongoose = require("mongoose");
 
+const signatureSchema = new mongoose.Schema({
+  name: String,
+  designation: String,
+  signature: Boolean,
+  date: Date,
+});
+
 const oilRegisterSchema = mongoose.Schema({
   from: String,
   type: {
@@ -18,11 +25,12 @@ const oilRegisterSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
-  vehicle:{
+  vehicle: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "vehicles",
   },
   for: String,
+  description: String,
   issued_amount: Number,
   recieved_amount: Number,
   cost: Number,
@@ -32,6 +40,8 @@ const oilRegisterSchema = mongoose.Schema({
   issue_voucher_no: String,
   remarks: String,
   slno: Number,
+  sign_polhavaldar: signatureSchema,
+  sign_mtic: signatureSchema,
 });
 
 const oilregister_Model = mongoose.model("oilstockregister", oilRegisterSchema);

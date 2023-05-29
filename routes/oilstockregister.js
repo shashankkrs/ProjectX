@@ -2,11 +2,65 @@ const express = require("express");
 const oilstockRegister = require("../model/oilstockregister");
 const route = express.Router();
 const Oil = require("../model/oils");
+const bcrypt = require("bcrypt");
 
 route.get("/", async (req, res) => {
   try {
     const oilstockregister = await oilstockRegister.find().sort({ slno: -1 });
     res.send(oilstockregister);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+route.post("/sign/add/:as", async (req, res) => {
+  try {
+    const { as } = req.params;
+    const { voucherID, password } = req.body;
+    const isvalidUser = bcrypt.compareSync(password, req.loggedUser.password);
+    if (isvalidUser) {
+      if (as == "sign_polhavaldar") {
+        console.log("YAAS");
+        const oilstockregister = await oilstockRegister.findByIdAndUpdate(
+          req.body.voucherID,
+          {
+            $set: {
+              sign_polhavaldar: {
+                name: req.loggedUser.name,
+                designation: req.loggedUser.role,
+                signature: true,
+                date: Date.now(),
+              },
+            },
+          }
+        );
+      }
+
+      if (as == "sign_mtic") {
+        const oilstockregister = await oilstockRegister.findByIdAndUpdate(
+          req.body.voucherID,
+          {
+            $set: {
+              sign_mtic: {
+                name: req.loggedUser.name,
+                designation: req.loggedUser.role,
+                signature: true,
+                date: Date.now(),
+              },
+            },
+          }
+        );
+      }
+      res.send({
+        status: 200,
+        message: "Signature Added",
+      });
+    }else{
+      res.send({
+        status: 400,
+        message: "Invalid Password",
+      });
+    }
   } catch (error) {
     console.log(error);
   }
@@ -127,7 +181,7 @@ route.put("/update/:id", async (req, res) => {
   }
 });
 
-route.get("/:id", async (req, res) => {
+route.get("/voucher/:id", async (req, res) => {
   try {
     const oilID = req.params.id;
     const oilstockregister = await oilstockRegister
