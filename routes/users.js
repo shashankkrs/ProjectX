@@ -25,7 +25,7 @@ const upload = multer({ storage: storage });
 // To Find Users
 route.get("/", async (req, res) => {
   try {
-    const userList = await User.find();
+    const userList = await User.find({}, { password: 0 });
     res.send(userList);
   } catch (error) {
     console.log(error);

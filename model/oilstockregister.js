@@ -18,6 +18,11 @@ const oilRegisterSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
+  vehicle:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "vehicles",
+  },
+  for: String,
   issued_amount: Number,
   recieved_amount: Number,
   cost: Number,

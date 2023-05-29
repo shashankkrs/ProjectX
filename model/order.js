@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const orderSchema = mongoose.Schema({
   sno: Number,
   voucher_no: String,
-  // orderID: String,
   station: String,
   date: Date,
   items: [

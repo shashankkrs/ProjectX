@@ -1,6 +1,11 @@
 const express = require("express");
 const Driver = require("../model/driver");
 const route = express.Router();
+const fileUpload = require("express-fileupload");
+const mime = require("mime");
+const path = require("path");
+
+route.use(fileUpload());
 
 // To Find drivers
 route.get("/", async (req, res) => {
@@ -16,6 +21,19 @@ route.get("/", async (req, res) => {
 route.post("/add", async (req, res) => {
   try {
     const newDriver = await new Driver(req.body);
+    let filename = "";
+    let ext = "";
+    if (req.files) {
+      let profile_pic = req.files.profile_pic;
+      ext = mime.getExtension(profile_pic.mimetype);
+      filename = newDriver._id + "." + ext;
+      profile_pic.mv(
+        path.join(__dirname, "..", "public/images", "profilepic", filename)
+      );
+      newDriver.profile_pic = filename;
+    } else {
+      newDriver.profile_pic = "";
+    }
     newDriver.save();
     if (newDriver) {
       res.send({
