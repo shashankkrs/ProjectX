@@ -75,6 +75,7 @@ const isLoggedIn = async (req, res, next) => {
       var decoded = await jwt.verify(token, process.env.JWT_SIGNATURE);
       const loggedUser = await User.findOne({ _id: decoded.userID });
       if (loggedUser) {
+        req.loggedUser = loggedUser;
         next();
       } else {
         res.send("PLEASE LOG IN");

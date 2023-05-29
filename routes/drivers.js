@@ -5,7 +5,7 @@ const route = express.Router();
 // To Find drivers
 route.get("/", async (req, res) => {
   try {
-    const driverList = await Driver.find();
+    const driverList = await Driver.find().sort({ name: 1 });
     res.send(driverList);
   } catch (error) {
     console.log(error);

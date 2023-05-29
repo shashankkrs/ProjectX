@@ -35,68 +35,103 @@ route.get("/", async (req, res) => {
 // To Add Users
 route.post("/add", async (req, res) => {
   try {
-    const {
-      username,
-      password,
-      contact_no,
-      email_id,
-      rank,
-      user_registration_no,
-    } = req.body;
-    const foundUser = await User.findOne({ username: username });
+    let body = {
+      ...req.body,
+      username: req.body.email,
+    };
+    let username = req.body.email;
+    let password = req.body.password;
+
+    delete body.password;
+
+    if (req.body.name == null || req.body.name == "") {
+      res.send({
+        status: 406,
+        check: "name",
+        message: "Name is Required",
+      });
+      return;
+    }
+
+    if (username == null || username == "") {
+      res.send({
+        status: 406,
+        check: "email",
+        message: "Email is Required",
+      });
+      return;
+    }
+
+    const foundUser = await User.findOne({ username: req.body.email });
     if (foundUser) {
-      res.send("USERNAME ALREADY TAKEN");
+      res.send({
+        status: 409,
+        message: "This Email is Already Registered",
+      });
     } else {
-      let sampleFile = req.files.photo;
-      var ext;
-      switch (sampleFile.mimetype) {
-        case "image/gif":
-          ext = ".gif";
-          break;
-        case "image/jpeg":
-          ext = ".jpeg";
-          break;
-        case "image/png":
-          ext = ".png";
-          break;
-        default:
-          ext = "";
-          break;
+      if (password == null || password == "") {
+        res.send({
+          status: 406,
+          check: "password",
+          message: "Password is Required",
+        });
+        return;
       }
-      var profile_pic_id = uuid();
-      let uploadPath =
-        __dirname + "/../public/images/profilepic/" + profile_pic_id + ext;
-      mime.getExtension(sampleFile);
-      sampleFile.mv(uploadPath);
+      const newUser = await new User(body);
+      let profile_pic_id = "";
+      let ext = "";
+      if (req.files) {
+        let sampleFile = req.files.photo;
+        switch (sampleFile.mimetype) {
+          case "image/gif":
+            ext = ".gif";
+            break;
+          case "image/jpeg":
+            ext = ".jpeg";
+            break;
+          case "image/png":
+            ext = ".png";
+            break;
+          default:
+            ext = "";
+            break;
+        }
+        profile_pic_id = newUser._id;
+        let uploadPath =
+          __dirname + "/../public/images/profilepic/" + profile_pic_id + ext;
+        sampleFile.mv(uploadPath);
+      }
       const salt = bcrypt.genSaltSync(10);
       const hash = bcrypt.hashSync(password, salt);
-      const newUser = await new User({
-        username: username,
-        password: hash,
-        contact_no: contact_no,
-        email_id: email_id,
-        rank: rank,
-        user_registration_no: user_registration_no,
-        profile_pic: profile_pic_id + ext,
-      });
+      newUser.password = hash;
+      newUser.profile_pic = profile_pic_id + ext;
+      console.log(newUser);
       newUser.save();
+
       res.send("NEW USER CREATED");
     }
-  } catch (error) {
-    console.log(error);
-  }
-});
 
-route.post("/change", async (req, res) => {
-  try {
-    const {
-      username,
-      password,
-      contact_no,
-      email_id,
-      rank,
-      user_registration_no,
-    } = req.body;
+    //else {
+    //
+    // var profile_pic_id = uuid();
+    // let uploadPath =
+    //   __dirname + "/../public/images/profilepic/" + profile_pic_id + ext;
+    // mime.getExtension(sampleFile);
+    // sampleFile.mv(uploadPath);
+
+    // const newUser = await new User({
+    //   username: username,
+    //   password: hash,
+    //   contact_no: contact_no,
+    //   email_id: email_id,
+    //   rank: rank,
+    //   user_registration_no: user_registration_no,
+    //   profile_pic: profile_pic_id + ext,
+    // });
+
+    // newUser.save();
+    //   res.send("NEW USER CREATED");
+    // }
   } catch (error) {
     console.log(error);
   }
@@ -109,7 +144,7 @@ route.get("/get_user_details", async (req, res) => {
       process.env.JWT_SIGNATURE
     );
     const user = decoded.userID;
-    const data = await User.findById(user);
+    const data = await User.findById(user, { password: 0 });
     res.send(data);
   } catch (error) {
     console.log(error);
@@ -120,7 +155,7 @@ route.get("/get_user_details", async (req, res) => {
 route.get("/:id", async (req, res) => {
   try {
     const userID = req.params.id;
-    const foundUser = await User.findById(userID);
+    const foundUser = await User.findById(userID, { password: 0 });
     res.send(foundUser);
   } catch (error) {
     console.log(error);
@@ -130,11 +165,6 @@ route.get("/:id", async (req, res) => {
 route.put("/update/:id", async (req, res) => {
   try {
     const userId = req.params.id;
-    const upd_in_name = req.body.username;
-    const upd_in_role = req.body.role;
-    const upd_in_rank = req.body.rank;
-    const upd_in_phone_no = req.body.contact_no;
-    const upd_in_email_id = req.body.email_id;
 
     if (req.files && req.files.photo) {
       sampleFile = req.files.photo;
@@ -153,28 +183,24 @@ route.put("/update/:id", async (req, res) => {
           ext = "";
           break;
       }
-      var profile_pic_id = uuid();
+      var profile_pic_id = req.loggedUser._id;
       let uploadPath =
         __dirname + "/../public/images/profilepic/" + profile_pic_id + ext;
       mime.getExtension(sampleFile);
       sampleFile.mv(uploadPath);
-      const foundUser = await User.findByIdAndUpdate(userId, {
-        name: upd_in_name,
-        role: upd_in_role,
-        rank: upd_in_rank,
-        contact_no: upd_in_phone_no,
-        email_id: upd_in_email_id,
+      let newBody = {
+        ...req.body,
         profile_pic: profile_pic_id + ext,
-      });
+        username: req.body.email,
+      };
+      const foundUser = await User.findByIdAndUpdate(userId, newBody);
       res.send(foundUser);
     } else {
-      const foundUser = await User.findByIdAndUpdate(userId, {
-        name: upd_in_name,
-        role: upd_in_role,
-        rank: upd_in_rank,
-        contact_no: upd_in_phone_no,
-        email_id: upd_in_email_id,
-      });
+      let newBody = {
+        ...req.body,
+        username: req.body.email,
+      };
+      const foundUser = await User.findByIdAndUpdate(userId, newBody);
       res.send(foundUser);
     }
   } catch (error) {

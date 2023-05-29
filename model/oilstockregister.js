@@ -1,24 +1,33 @@
 const mongoose = require("mongoose");
 
-const oilregister_schema = mongoose.Schema({
-  Name_of_store: String,
-  Date: Date,
-  voucher_no: String,
-  from_whom_received_to_whom_issued: String,
-  recived: Number,
-  issued: Number,
-  balance: Number,
-  recivedd:Boolean,
-  issueed:Boolean,
-  signature_of_pol_havaldar: Boolean,
-  signature_of_mto: Boolean,
+const oilRegisterSchema = mongoose.Schema({
+  from: String,
+  type: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "oil",
+  },
+  date: {
+    type: Date,
+    default: Date.now(),
+  },
+  current_balance: {
+    type: Number,
+    default: 0,
+  },
+  previous_balance: {
+    type: Number,
+    default: 0,
+  },
+  issued_amount: Number,
+  recieved_amount: Number,
+  cost: Number,
+  recieved: Boolean,
+  issued: Boolean,
+  recieve_voucher_no: String,
+  issue_voucher_no: String,
   remarks: String,
-  vehicle_id:String,
-  last:Boolean,
-  slno:Number,
+  slno: Number,
 });
-const oilregister_Model = mongoose.model(
-  "oilstockregister",
-  oilregister_schema
-);
+
+const oilregister_Model = mongoose.model("oilstockregister", oilRegisterSchema);
 module.exports = oilregister_Model;

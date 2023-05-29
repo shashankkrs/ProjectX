@@ -1,10 +1,11 @@
 const express = require("express");
 const oilstockRegister = require("../model/oilstockregister");
 const route = express.Router();
+const Oil = require("../model/oils");
 
 route.get("/", async (req, res) => {
   try {
-    const oilstockregister = await oilstockRegister.find().sort({slno: -1});
+    const oilstockregister = await oilstockRegister.find().sort({ slno: -1 });
     res.send(oilstockregister);
   } catch (error) {
     console.log(error);
@@ -13,32 +14,59 @@ route.get("/", async (req, res) => {
 
 route.get("/last1", async (req, res) => {
   try {
-    const oilstockregister = await oilstockRegister.find({last:{$eq:true}});
-   
-    const [lastoil,others]=oilstockregister;
+    const oilstockregister = await oilstockRegister
+      .find()
+      .sort({ slno: -1 })
+      .limit(1);
+    const [lastoil, others] = oilstockregister;
     res.send(lastoil);
   } catch (error) {
     console.log(error);
   }
 });
-route.get('/:id', async(req, res) => {
+
+route.get("/oil/:id", async (req, res) => {
   try {
-      const oilID=req.params.id;
-      const oilstockregister=await oilstockRegister.findById(oilID);
-      res.send(oilstockregister);
+    const oilID = req.params.id;
+    const oilstockregister = await oilstockRegister
+      .find({
+        type: oilID,
+      })
+      .sort({ slno: -1 })
+      .populate("type");
+
+    res.send(oilstockregister);
   } catch (error) {
-      console.log(error);
+    console.log(error);
   }
 });
-route.post("/add", async (req, res) => {
+
+route.post("/allot", async (req, res) => {
   try {
-    const new_oilstockregister = await new oilstockRegister(req.body);
-    new_oilstockregister.save();
-    console.log(req.body);
-    console.log(new_oilstockregister);
-    if (new_oilstockregister) {
-      res.send(new_oilstockregister._id);
-      console.log(new_oilstockregister._id)
+    let body = {
+      ...req.body,
+      issued: true,
+    };
+    const newOilReg = await new oilstockRegister(body);
+    console.log(body);
+    const updatedOilBalance = await Oil.findByIdAndUpdate(newOilReg.type, {
+      $inc: { balance: -1 * newOilReg.issued_amount },
+    });
+
+    newOilReg.previous_balance = updatedOilBalance.balance;
+    if (updatedOilBalance.balance - newOilReg.issued_amount >= 0) {
+      newOilReg.current_balance =
+        updatedOilBalance.balance - newOilReg.issued_amount;
+    }
+    newOilReg.save();
+    console.log(newOilReg);
+    console.log(updatedOilBalance);
+    if (newOilReg) {
+      res.send({
+        status: 200,
+        message: "Oil stock register added successfully",
+        data: newOilReg,
+      });
     } else {
       res.send("Unable to add");
     }
@@ -46,22 +74,61 @@ route.post("/add", async (req, res) => {
     console.log(error);
   }
 });
-route.put('/update/:id',async(req,res)=>{
+
+route.post("/add", async (req, res) => {
   try {
-   const dutyId=req.params.id;
-   const upde=req.body.last;
-   //const updstatus=req.body.mission_ended;
-   console.log(dutyId);
-   //console.log(updintime);
-   const foundDuty1=await oilstockRegister.findByIdAndUpdate(dutyId, {last:upde});
-     res.send(foundDuty1);
-     console.log((foundDuty1));
+    let body = {
+      ...req.body,
+      recieved: true,
+    };
+    const newOilReg = await new oilstockRegister(body);
+    const updatedOilBalance = await Oil.findByIdAndUpdate(newOilReg.type, {
+      $inc: { balance: newOilReg.recieved_amount },
+    });
+    newOilReg.previous_balance = updatedOilBalance.balance;
+    newOilReg.current_balance =
+      updatedOilBalance.balance + newOilReg.recieved_amount;
+
+    newOilReg.save();
+    if (newOilReg) {
+      res.send({
+        status: 200,
+        message: "Oil stock register added successfully",
+        data: newOilReg,
+      });
+    } else {
+      res.send("Unable to add");
+    }
   } catch (error) {
-      console.log(error);
+    console.log(error);
   }
-  
-  
-  
-  });
+});
+
+route.get("/:id", async (req, res) => {
+  try {
+    const oilID = req.params.id;
+    const oilstockregister = await oilstockRegister.findById(oilID);
+    res.send(oilstockregister);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+route.put("/update/:id", async (req, res) => {
+  try {
+    const dutyId = req.params.id;
+    const upde = req.body.last;
+    //const updstatus=req.body.mission_ended;
+    console.log(dutyId);
+    //console.log(updintime);
+    const foundDuty1 = await oilstockRegister.findByIdAndUpdate(dutyId, {
+      last: upde,
+    });
+    res.send(foundDuty1);
+    console.log(foundDuty1);
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 module.exports = route;

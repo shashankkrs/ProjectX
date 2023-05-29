@@ -1,12 +1,12 @@
 const mongoose=require('mongoose')
 
 const userSchema=mongoose.Schema({
-    user_registration_no:String,
+    registration_no:String,
     name:String,
     username:String,
     password :String,
-    contact_no:Number,
-    email_id:String,
+    phone:Number,
+    email:String,
     rank:String,
     role:String,
     profile_pic : String

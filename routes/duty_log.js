@@ -2,6 +2,7 @@ const express = require("express");
 const Duty_Log = require("../model/duty_log");
 const Vehicle = require("../model/vehicle");
 const Driver = require("../model/driver");
+const bcrypt = require("bcrypt");
 
 const route = express.Router();
 
@@ -36,6 +37,69 @@ route.get("/uncompleted", async (req, res) => {
       mission_ended: { $eq: false },
     }).populate("vehicle");
     res.send(dutyLog1);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+route.post("/sign/add/:as", async (req, res) => {
+  try {
+    let sign = req.params.as;
+    let password = req.body.password;
+    const isvalidUser = bcrypt.compareSync(password, req.loggedUser.password);
+    if (isvalidUser) {
+      if (sign == "sign_indenter") {
+        const dutyLog = await Duty_Log.findByIdAndUpdate(req.body.dutyID, {
+          $set: {
+            sign_indenter: {
+              name: req.loggedUser.name,
+              designation: req.loggedUser.role,
+              signature: true,
+            },
+          },
+        });
+        res.send("ok");
+      }
+      if (sign === "sign_mto") {
+        const dutyLog1 = await Duty_Log.findByIdAndUpdate(req.body.dutyID, {
+          $set: {
+            sign_mto: {
+              name: req.loggedUser.name,
+              designation: req.loggedUser.role,
+              signature: true,
+            },
+          },
+        });
+        res.send("ok");
+      }
+      if (sign === "sign_mtic") {
+        const dutyLog1 = await Duty_Log.findByIdAndUpdate(req.body.dutyID, {
+          $set: {
+            sign_mtic: {
+              name: req.loggedUser.name,
+              designation: req.loggedUser.role,
+              signature: true,
+            },
+          },
+        });
+        res.send("ok");
+      }
+      if (sign === "sign_indentingoffice") {
+        const dutyLog1 = await Duty_Log.findByIdAndUpdate(req.body.dutyID, {
+          $set: {
+            sign_indentingoffice: {
+              name: req.loggedUser.name,
+              designation: req.loggedUser.role,
+              signature: true,
+            },
+          },
+        });
+        res.send("ok");
+      }
+    } else {
+    
+      res.send("WRONG PASSWORD");
+    }
   } catch (error) {
     console.log(error);
   }

@@ -22,6 +22,23 @@ route.get("/", async (req, res) => {
   }
 });
 
+route.get("/available", async (req, res) => {
+  try {
+    const vehicleList = await Vehicle.find(
+      {
+        deleted: false,
+        available: true,
+      },
+      {
+        fuel_log: 0,
+      }
+    );
+    res.send(vehicleList);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 route.post("/crp_no", async (req, res) => {
   try {
     const vehicle = await Vehicle.findOne({ vehicle_crp_no: req.body.crp_no });
