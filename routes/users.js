@@ -8,6 +8,8 @@ const fileUpload = require("express-fileupload");
 const { v4: uuid } = require("uuid");
 const mime = require("mime");
 const path = require("path");
+const { exec } = require("child_process");
+const fs = require("fs");
 
 route.use(fileUpload());
 
@@ -110,28 +112,6 @@ route.post("/add", async (req, res) => {
 
       res.send("NEW USER CREATED");
     }
-
-    //else {
-    //
-    // var profile_pic_id = uuid();
-    // let uploadPath =
-    //   __dirname + "/../public/images/profilepic/" + profile_pic_id + ext;
-    // mime.getExtension(sampleFile);
-    // sampleFile.mv(uploadPath);
-
-    // const newUser = await new User({
-    //   username: username,
-    //   password: hash,
-    //   contact_no: contact_no,
-    //   email_id: email_id,
-    //   rank: rank,
-    //   user_registration_no: user_registration_no,
-    //   profile_pic: profile_pic_id + ext,
-    // });
-
-    // newUser.save();
-    //   res.send("NEW USER CREATED");
-    // }
   } catch (error) {
     console.log(error);
   }
@@ -184,8 +164,11 @@ route.put("/update/:id", async (req, res) => {
           break;
       }
       var profile_pic_id = req.loggedUser._id;
-      let uploadPath =
-        __dirname + "/../public/images/profilepic/" + profile_pic_id + ext;
+      let uploadPath = path.join(
+        __dirname,
+        "..",
+        "public/images/profilepic/" + profile_pic_id + ext
+      );
       mime.getExtension(sampleFile);
       sampleFile.mv(uploadPath);
       let newBody = {
@@ -194,7 +177,31 @@ route.put("/update/:id", async (req, res) => {
         username: req.body.email,
       };
       const foundUser = await User.findByIdAndUpdate(userId, newBody);
-      res.send(foundUser);
+
+      let inputImage = path.join(
+        __dirname,
+        "..",
+        "public/images/profilepic/" + profile_pic_id + ext
+      );
+
+      let outputImage = path.join(
+        __dirname,
+        "..",
+        "public/images/temppic/" + profile_pic_id + ext
+      );
+
+      const command = `rembg i ${inputImage} ${outputImage}`;
+      exec(command, (err, stdout, stderr) => {
+        if (err) {
+          res.send(foundUser);
+          return;
+        } else {
+          console.log("Image Background Removed");
+          fs.renameSync(outputImage, inputImage);
+          res.send(foundUser);
+          return;
+        }
+      });
     } else {
       let newBody = {
         ...req.body,

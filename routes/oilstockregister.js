@@ -142,7 +142,7 @@ route.post("/allot", async (req, res) => {
     if (newOilReg) {
       res.send({
         status: 200,
-        message: "Oil stock register added successfully",
+        message: "Oil Stock Updated Successfully",
         data: newOilReg,
       });
     } else {

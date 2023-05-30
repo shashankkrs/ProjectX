@@ -3,6 +3,10 @@ const Vehicle = require("../model/vehicle");
 const route = express.Router();
 const fileUpload = require("express-fileupload");
 const { v4: uuid } = require("uuid");
+const path = require("path");
+const mime = require("mime");
+const fs = require("fs");
+const {exec} = require("child_process");
 
 route.use(fileUpload());
 
@@ -97,6 +101,32 @@ route.post("/:id/update", async (req, res) => {
           __dirname + "/../public/images/vehicle_images/" + pic_name + ext;
         req.body.front_view = pic_name + ext;
         front_view.mv(uploadPath);
+
+        // Remove Background
+        let inputImage = path.join(
+          __dirname,
+          "..",
+          "public/images/vehicle_images/" + pic_name + ext
+        );
+
+        let outputImage = path.join(
+          __dirname,
+          "..",
+          "public/images/temppic/" + pic_name + ext
+        );
+
+        const command = `rembg i ${inputImage} ${outputImage}`;
+        exec(command, (err, stdout, stderr) => {
+          if (err) {
+            // res.send(foundUser);
+            return;
+          } else {
+            console.log("Image Background Removed");
+            fs.renameSync(outputImage, inputImage);
+            // res.send(foundUser);
+            return;
+          }
+        });
       }
       let back_view = req.files.back_view;
       if (back_view) {
@@ -120,6 +150,32 @@ route.post("/:id/update", async (req, res) => {
           __dirname + "/../public/images/vehicle_images/" + pic_name + ext;
         req.body.back_view = pic_name + ext;
         back_view.mv(uploadPath);
+
+        // Remove Background
+        let inputImage = path.join(
+          __dirname,
+          "..",
+          "public/images/vehicle_images/" + pic_name + ext
+        );
+
+        let outputImage = path.join(
+          __dirname,
+          "..",
+          "public/images/temppic/" + pic_name + ext
+        );
+
+        const command = `rembg i ${inputImage} ${outputImage}`;
+        exec(command, (err, stdout, stderr) => {
+          if (err) {
+            // res.send(foundUser);
+            return;
+          } else {
+            console.log("Image Background Removed");
+            fs.renameSync(outputImage, inputImage);
+            // res.send(foundUser);
+            return;
+          }
+        });
       }
       let top_view = req.files.top_view;
       if (top_view) {
@@ -143,6 +199,32 @@ route.post("/:id/update", async (req, res) => {
           __dirname + "/../public/images/vehicle_images/" + pic_name + ext;
         req.body.top_view = pic_name + ext;
         top_view.mv(uploadPath);
+
+        // Remove Background
+        let inputImage = path.join(
+          __dirname,
+          "..",
+          "public/images/vehicle_images/" + pic_name + ext
+        );
+
+        let outputImage = path.join(
+          __dirname,
+          "..",
+          "public/images/temppic/" + pic_name + ext
+        );
+
+        const command = `rembg i ${inputImage} ${outputImage}`;
+        exec(command, (err, stdout, stderr) => {
+          if (err) {
+            // res.send(foundUser);
+            return;
+          } else {
+            console.log("Image Background Removed");
+            fs.renameSync(outputImage, inputImage);
+            // res.send(foundUser);
+            return;
+          }
+        });
       }
       let right_view = req.files.right_view;
       if (right_view) {
@@ -166,6 +248,32 @@ route.post("/:id/update", async (req, res) => {
           __dirname + "/../public/images/vehicle_images/" + pic_name + ext;
         req.body.right_view = pic_name + ext;
         right_view.mv(uploadPath);
+
+        // Remove Background
+        let inputImage = path.join(
+          __dirname,
+          "..",
+          "public/images/vehicle_images/" + pic_name + ext
+        );
+
+        let outputImage = path.join(
+          __dirname,
+          "..",
+          "public/images/temppic/" + pic_name + ext
+        );
+
+        const command = `rembg i ${inputImage} ${outputImage}`;
+        exec(command, (err, stdout, stderr) => {
+          if (err) {
+            // res.send(foundUser);
+            return;
+          } else {
+            console.log("Image Background Removed");
+            fs.renameSync(outputImage, inputImage);
+            // res.send(foundUser);
+            return;
+          }
+        });
       }
       let left_view = req.files.left_view;
       if (left_view) {
@@ -189,6 +297,32 @@ route.post("/:id/update", async (req, res) => {
           __dirname + "/../public/images/vehicle_images/" + pic_name + ext;
         req.body.left_view = pic_name + ext;
         left_view.mv(uploadPath);
+
+        // Remove Background
+        let inputImage = path.join(
+          __dirname,
+          "..",
+          "public/images/vehicle_images/" + pic_name + ext
+        );
+
+        let outputImage = path.join(
+          __dirname,
+          "..",
+          "public/images/temppic/" + pic_name + ext
+        );
+
+        const command = `rembg i ${inputImage} ${outputImage}`;
+        exec(command, (err, stdout, stderr) => {
+          if (err) {
+            // res.send(foundUser);
+            return;
+          } else {
+            console.log("Image Background Removed");
+            fs.renameSync(outputImage, inputImage);
+            // res.send(foundUser);
+            return;
+          }
+        });
       }
     }
     const vehicle = await Vehicle.findOneAndUpdate(
