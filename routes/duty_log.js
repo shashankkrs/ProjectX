@@ -97,7 +97,6 @@ route.post("/sign/add/:as", async (req, res) => {
         res.send("ok");
       }
     } else {
-    
       res.send("WRONG PASSWORD");
     }
   } catch (error) {
@@ -129,6 +128,12 @@ route.post("/add", async (req, res) => {
         foundVehicle.save();
       } else {
         foundVehicle.available = true;
+        foundVehicle.odometer_log.push({
+          km_diff: meter_count - foundVehicle.km_run,
+          km_run: meter_count,
+          date: Date.now,
+        });
+        foundVehicle.fuel = fuel;
         foundVehicle.save();
       }
     }
@@ -157,14 +162,17 @@ route.post("/add", async (req, res) => {
 // update fields
 route.put("/update/:id", async (req, res) => {
   try {
-    const { km_run, meter_count, fuel, mission_ended, in_datetime } = req.body;
-    const foundDuty = await Duty_Log.findByIdAndUpdate(req.params.id, {
-      in_datetime: in_datetime,
-      mission_ended: mission_ended,
-      km_run: km_run,
-      meter_count: meter_count,
-      fuel: fuel,
-    });
+    const { meter_count, fuel, in_datetime } = req.body;
+    const foundDuty = await Duty_Log.findById(req.params.id);
+    if (foundDuty) {
+      foundDuty.km_run =
+        parseInt(meter_count) - parseInt(foundDuty.meter_count);
+      foundDuty.meter_count = meter_count - foundDuty.meter_count;
+      foundDuty.fuel = fuel;
+      foundDuty.mission_ended = true;
+      foundDuty.in_datetime = in_datetime;
+      foundDuty.save();
+    }
 
     const foundVehicle = await Vehicle.findById(foundDuty.vehicle);
     if (foundVehicle) {
@@ -173,6 +181,21 @@ route.put("/update/:id", async (req, res) => {
         foundVehicle.save();
       } else {
         foundVehicle.available = true;
+
+        foundVehicle.odometer_log.push({
+          km_diff:
+            parseInt(meter_count) - parseInt(foundVehicle.total_kilo_meter),
+          km_run: meter_count,
+          date: Date.now(),
+        });
+        foundVehicle.total_kilo_meter = meter_count;
+        foundVehicle.fuel_log.push({
+          current_fuel: fuel,
+          fuel_diff: fuel - foundVehicle.fuel,
+          date: Date.now(),
+        });
+        foundVehicle.fuel = fuel;
+        console.log(foundVehicle);
         foundVehicle.save();
       }
     }

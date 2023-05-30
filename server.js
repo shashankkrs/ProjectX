@@ -88,6 +88,31 @@ const isLoggedIn = async (req, res, next) => {
   }
 };
 
+app.post("/checklogin", async (req, res) => {
+  try {
+    var token = req.cookies.token;
+    if (req.cookies.token) {
+      var decoded = await jwt.verify(token, process.env.JWT_SIGNATURE);
+      const loggedUser = await User.findOne({ _id: decoded.userID });
+      if (loggedUser) {
+        res.send({
+          status: 200,
+        });
+      } else {
+        res.send({
+          status: 401,
+        });
+      }
+    } else {
+      res.send({
+        status: 401,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 //Register User
 app.post("/register", async (req, res) => {
   try {
@@ -142,6 +167,17 @@ app.post("/login", async (req, res) => {
     } else {
       res.send("INVALID CREDENTIALS");
     }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.post("/logout", async (req, res) => {
+  try {
+    res.clearCookie("token").send({
+      status: 200,
+      message: "LOGGED OUT",
+    });
   } catch (error) {
     console.log(error);
   }

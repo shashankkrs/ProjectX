@@ -3,6 +3,7 @@ const oilstockRegister = require("../model/oilstockregister");
 const route = express.Router();
 const Oil = require("../model/oils");
 const bcrypt = require("bcrypt");
+const Vehicle = require("../model/vehicle");
 
 route.get("/", async (req, res) => {
   try {
@@ -20,7 +21,6 @@ route.post("/sign/add/:as", async (req, res) => {
     const isvalidUser = bcrypt.compareSync(password, req.loggedUser.password);
     if (isvalidUser) {
       if (as == "sign_polhavaldar") {
-        console.log("YAAS");
         const oilstockregister = await oilstockRegister.findByIdAndUpdate(
           req.body.voucherID,
           {
@@ -55,7 +55,7 @@ route.post("/sign/add/:as", async (req, res) => {
         status: 200,
         message: "Signature Added",
       });
-    }else{
+    } else {
       res.send({
         status: 400,
         message: "Invalid Password",
@@ -114,6 +114,20 @@ route.post("/allot", async (req, res) => {
       ...req.body,
       issued: true,
     };
+    if (req.body.vehicle&&req.body.for==="vehicle_fuel") {
+      const vehicle = await Vehicle.findById(req.body.vehicle, {
+        fuel: 1,
+        fuel_log: 1,
+      });
+      vehicle.fuel_log.push({
+        current_fuel: parseInt(vehicle.fuel) + parseInt(req.body.issued_amount),
+        date: Date.now(),
+        fuel_diff: req.body.issued_amount,
+      });
+      vehicle.fuel = parseInt(vehicle.fuel) + parseInt(req.body.issued_amount);
+      vehicle.save();
+    }
+
     const newOilReg = await new oilstockRegister(body);
     const updatedOilBalance = await Oil.findByIdAndUpdate(newOilReg.type, {
       $inc: { balance: -1 * newOilReg.issued_amount },

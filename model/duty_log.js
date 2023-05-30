@@ -26,8 +26,14 @@ const dutyLogSchema = mongoose.Schema({
   purpose: String,
   from: String,
   to: String,
-  km_run: Number,
-  meter_count: Number,
+  km_run: {
+    type: Number,
+    default: 0,
+  },
+  meter_count: {
+    type: Number,
+    default: 0,
+  },
   approved_by_mto: Boolean,
   fuel: Number,
   mission_ended: Boolean,

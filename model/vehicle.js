@@ -85,6 +85,7 @@ const vehicleSchema = mongoose.Schema({
     default: 10,
   },
   category: { type: String, default: "LMV" },
+  
   fuel_log: [
     {
       current_fuel: Number,
