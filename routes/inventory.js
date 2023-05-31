@@ -7,10 +7,8 @@ const Item = require("../model/item.js");
 route.get("/order", async (req, res) => {
   try {
     const lastOrder = await Order.find().sort({ _id: -1 }).limit(1);
-
     const temp = lastOrder[0].sno;
     const lastsno = temp.toString();
-
     res.send(lastsno);
   } catch (error) {
     console.log(error);
@@ -61,12 +59,9 @@ route.get("/order/:id", async (req, res) => {
 route.get("/issue", async (req, res) => {
   try {
     const lastIssue = await Issue.find().sort({ _id: -1 }).limit(1);
-
     const temp = lastIssue[0].sno;
     const lastsno = temp.toString();
-
     res.send(lastsno);
-    // res.send('1');
   } catch (error) {
     console.log(error);
   }
@@ -88,7 +83,7 @@ route.post("/issue/add", async (req, res) => {
     items.forEach((item) => {
       let id = item.item;
       Item.findById(id).exec((err, found_item) => {
-        found_item.quantity = found_item.quantity + parseInt(item.quantity);
+        found_item.quantity = found_item.quantity - parseInt(item.quantity);
         found_item.save();
       });
     });
@@ -105,18 +100,32 @@ route.post("/issue/add", async (req, res) => {
 
 route.get("/issue/:id", async (req, res) => {
   try {
-    const issue_id = req.params.id;
-    const foundIssue = await Issue.findById(issue_id).populate("items.item");
+    const foundIssue = await Issue.findById(req.params.id);
     res.send(foundIssue);
   } catch (error) {
     console.log(error);
   }
 });
 
+route.get("/voucher/:id", async (req, res) => {
+  try {
+    const issue_id = req.params.id;
+    const foundIssue = await Issue.findById(issue_id).populate("items.item");
+    const foundOrder = await Order.findById(issue_id).populate("items.item");
+
+    if (foundIssue) {
+      res.send(foundIssue);
+    } else {
+      res.send(foundOrder);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 route.get("/items", async (req, res) => {
   try {
     const itemList = await Item.find();
-    // console.log(itemList)
     res.send(itemList);
   } catch (error) {
     console.log(error);
@@ -125,9 +134,7 @@ route.get("/items", async (req, res) => {
 
 route.post("/items/add", async (req, res) => {
   try {
-    console.log(req.body);
     const { name, quantity, rate, description } = req.body;
-
     const foundItem = await Item.findOne({ name: name });
     if (foundItem) {
       res.send("ITEM NAME ALREADY TAKEN");
@@ -152,68 +159,20 @@ route.get("/items/:id", async (req, res) => {
   try {
     const itemID = req.params.id;
     const foundItem = await Item.findById(itemID);
-    console.log(foundItem);
     res.send(foundItem);
   } catch (error) {
     console.log(error);
   }
 });
-
-// to add Items by Id
-// route.post("/add")
-
-module.exports = route;
-
-// console.log(req.body);
 
 // to list out all the items
 route.get("/items", async (req, res) => {
   try {
     const itemList = await Item.find();
-    // console.log(itemList)
     res.send(itemList);
   } catch (error) {
     console.log(error);
   }
 });
-
-route.post("/items/add", async (req, res) => {
-  try {
-    console.log(req.body);
-    const { name, quantity, rate, description } = req.body;
-
-    const foundItem = await Item.findOne({ name: name });
-    if (foundItem) {
-      res.send("ITEM NAME ALREADY TAKEN");
-    } else {
-      const newItem = await new Item({
-        name: name,
-        quantity: quantity,
-        rate: rate,
-        description: description,
-      });
-      newItem.save();
-
-      res.send("NEW ITEM CREATED");
-    }
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-// to Find items by ID
-route.get("/items/:id", async (req, res) => {
-  try {
-    const itemID = req.params.id;
-    const foundItem = await Item.findById(itemID);
-    console.log(foundItem);
-    res.send(foundItem);
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-// to add Items by Id
-// route.post("/add")
 
 module.exports = route;
