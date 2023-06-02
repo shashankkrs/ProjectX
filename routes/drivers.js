@@ -4,6 +4,8 @@ const route = express.Router();
 const fileUpload = require("express-fileupload");
 const mime = require("mime");
 const path = require("path");
+const { exec } = require("child_process");
+const { changeVehicleBackground } = require("./../controller/functions");
 
 route.use(fileUpload());
 
@@ -11,6 +13,17 @@ route.use(fileUpload());
 route.get("/", async (req, res) => {
   try {
     const driverList = await Driver.find().sort({ name: 1 });
+    res.send(driverList);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+route.get("/available", async (req, res) => {
+  try {
+    const driverList = await Driver.find({
+      available: { $eq: true },
+    }).sort({ name: 1 });
     res.send(driverList);
   } catch (error) {
     console.log(error);
@@ -31,6 +44,26 @@ route.post("/add", async (req, res) => {
         path.join(__dirname, "..", "public/images", "profilepic", filename)
       );
       newDriver.profile_pic = filename;
+      let inputImage = path.join(
+        __dirname,
+        "..",
+        "public/images/profilepic/" + profile_pic + ext
+      );
+
+      let outputImage = path.join(
+        __dirname,
+        "..",
+        "public/images/temppic/" + profile_pic + ext
+      );
+
+      const command = `rembg i ${inputImage} ${outputImage}`;
+      exec(command, (err, stdout, stderr) => {
+        if (err) {
+          return;
+        } else {
+          fs.renameSync(outputImage, inputImage);
+        }
+      });
     } else {
       newDriver.profile_pic = "";
     }

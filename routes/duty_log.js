@@ -11,7 +11,40 @@ route.get("/", async (req, res) => {
   try {
     const dutyLog = await Duty_Log.find()
       .populate("vehicle")
-      .sort({ indent_no: -1 });
+      .populate("driver");
+    res.send(dutyLog);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+route.get("/duties/:from/:to", async (req, res) => {
+  try {
+    let from = new Date(req.params.from);
+    let to = new Date(req.params.to);
+    const dutyLog = await Duty_Log.find({
+      date: {
+        $gte: from,
+        $lte: to,
+      },
+    })
+      .limit(100)
+      .populate("vehicle")
+      .populate("driver");
+    res.send(dutyLog);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+route.get("/desc", async (req, res) => {
+  try {
+    const dutyLog = await Duty_Log.find()
+      .populate({
+        path: "vehicle",
+        select: "vehicle_crp_no name registration_no",
+      })
+      .sort({ creation_date: -1 });
     res.send(dutyLog);
   } catch (error) {
     console.log(error);
@@ -20,7 +53,7 @@ route.get("/", async (req, res) => {
 
 route.get("/last_indent_no", async (req, res) => {
   try {
-    const dutyLog = await Duty_Log.find().sort({ indent_no: -1 }).limit(1);
+    const dutyLog = await Duty_Log.find().sort({ creation_date: -1 }).limit(1);
     if (dutyLog[0]) {
       res.send(dutyLog[0].indent_no);
     } else {
@@ -48,54 +81,16 @@ route.post("/sign/add/:as", async (req, res) => {
     let password = req.body.password;
     const isvalidUser = bcrypt.compareSync(password, req.loggedUser.password);
     if (isvalidUser) {
-      if (sign == "sign_indenter") {
-        const dutyLog = await Duty_Log.findByIdAndUpdate(req.body.dutyID, {
-          $set: {
-            sign_indenter: {
-              name: req.loggedUser.name,
-              designation: req.loggedUser.role,
-              signature: true,
-            },
-          },
-        });
-        res.send("ok");
-      }
-      if (sign === "sign_mto") {
-        const dutyLog1 = await Duty_Log.findByIdAndUpdate(req.body.dutyID, {
-          $set: {
-            sign_mto: {
-              name: req.loggedUser.name,
-              designation: req.loggedUser.role,
-              signature: true,
-            },
-          },
-        });
-        res.send("ok");
-      }
-      if (sign === "sign_mtic") {
-        const dutyLog1 = await Duty_Log.findByIdAndUpdate(req.body.dutyID, {
-          $set: {
-            sign_mtic: {
-              name: req.loggedUser.name,
-              designation: req.loggedUser.role,
-              signature: true,
-            },
-          },
-        });
-        res.send("ok");
-      }
-      if (sign === "sign_indentingoffice") {
-        const dutyLog1 = await Duty_Log.findByIdAndUpdate(req.body.dutyID, {
-          $set: {
-            sign_indentingoffice: {
-              name: req.loggedUser.name,
-              designation: req.loggedUser.role,
-              signature: true,
-            },
-          },
-        });
-        res.send("ok");
-      }
+      const update = {
+        $set: {},
+      };
+      update.$set[sign] = {
+        name: req.loggedUser.name,
+        designation: req.loggedUser.role,
+        signature: true,
+      };
+      const dutyLog = await Duty_Log.findByIdAndUpdate(req.body.dutyID, update);
+      res.send("ok");
     } else {
       res.send("WRONG PASSWORD");
     }
@@ -120,7 +115,7 @@ route.get("/:id", async (req, res) => {
 //To Add New Duty Log
 route.post("/add", async (req, res) => {
   try {
-    const newDutyLog = await new Duty_Log(req.body);
+    const newDutyLog = new Duty_Log(req.body);
     const foundVehicle = await Vehicle.findById(req.body.vehicle);
     if (foundVehicle) {
       if (req.body.mission_ended === "false") {
@@ -162,7 +157,9 @@ route.post("/add", async (req, res) => {
 // update fields
 route.put("/update/:id", async (req, res) => {
   try {
-    const { meter_count, fuel, in_datetime } = req.body;
+    const { in_datetime } = req.body;
+    let meter_count = req.body.meter_count ? req.body.meter_count : 0;
+    let fuel = req.body.fuel ? req.body.fuel : 0;
     const foundDuty = await Duty_Log.findById(req.params.id);
     if (foundDuty) {
       foundDuty.km_run =
@@ -171,32 +168,29 @@ route.put("/update/:id", async (req, res) => {
       foundDuty.fuel = fuel;
       foundDuty.mission_ended = true;
       foundDuty.in_datetime = in_datetime;
-      foundDuty.save();
+      console.log(foundDuty);
+      // foundDuty.save();
     }
 
     const foundVehicle = await Vehicle.findById(foundDuty.vehicle);
     if (foundVehicle) {
       if (req.body.mission_ended === "false") {
         foundVehicle.available = false;
-        foundVehicle.save();
+        // foundVehicle.save();
       } else {
         foundVehicle.available = true;
-
         foundVehicle.odometer_log.push({
           km_diff:
             parseInt(meter_count) - parseInt(foundVehicle.total_kilo_meter),
           km_run: meter_count,
-          date: Date.now(),
         });
         foundVehicle.total_kilo_meter = meter_count;
         foundVehicle.fuel_log.push({
           current_fuel: fuel,
           fuel_diff: fuel - foundVehicle.fuel,
-          date: Date.now(),
         });
         foundVehicle.fuel = fuel;
-        console.log(foundVehicle);
-        foundVehicle.save();
+        // foundVehicle.save();
       }
     }
 
@@ -204,10 +198,10 @@ route.put("/update/:id", async (req, res) => {
     if (foundDriver) {
       if (req.body.mission_ended === "false") {
         foundDriver.available = false;
-        foundDriver.save();
+        // foundDriver.save();
       } else {
         foundDriver.available = true;
-        foundDriver.save();
+        // foundDriver.save();
       }
     }
 

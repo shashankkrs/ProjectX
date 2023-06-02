@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const expenseVoucherSchema = mongoose.Schema({
+const expenseVoucherSchema =new mongoose.Schema({
     sl_no : Number,
     items : String,
     vehicle_reg_no : String,

@@ -15,7 +15,7 @@ const oilRegisterSchema = mongoose.Schema({
   },
   date: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
   current_balance: {
     type: Number,

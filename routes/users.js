@@ -10,6 +10,7 @@ const mime = require("mime");
 const path = require("path");
 const { exec } = require("child_process");
 const fs = require("fs");
+const { changeProfileBackground } = require("../controller/functions");
 
 route.use(fileUpload());
 
@@ -208,7 +209,11 @@ route.put("/update/:id", async (req, res) => {
         username: req.body.email,
       };
       const foundUser = await User.findByIdAndUpdate(userId, newBody);
-      res.send(foundUser);
+      res.send({
+        status: 200,
+        message: "User Updated",
+        user: foundUser._id,
+      });
     }
   } catch (error) {
     console.log(error);

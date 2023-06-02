@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const issueVoucherSchema = mongoose.Schema({
+const issueVoucherSchema =new mongoose.Schema({
     receiveVoucherNo: String,
     station : String,
     date : Date,

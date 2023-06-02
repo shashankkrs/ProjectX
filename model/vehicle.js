@@ -1,8 +1,26 @@
 const mongoose = require("mongoose");
 const { Schema } = require("mongoose");
 
+const odometerLogSchema = new mongoose.Schema({
+  km_run: Number,
+  km_diff: Number,
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+const fuelLogSchema = new mongoose.Schema({
+  current_fuel: Number,
+  fuel_diff: Number,
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 // * * Vehicle elements
-const vehicleSchema = mongoose.Schema({
+const vehicleSchema = new mongoose.Schema({
   vehicle_no: String,
   vehicle_crp_no: Number,
   name: String,
@@ -36,6 +54,7 @@ const vehicleSchema = mongoose.Schema({
   battery_volt: String,
   battery_no: String,
   date_of_service: Date,
+
   engine_first_overhaul: Number,
   distance_before_first_overhaul: Number,
   date_of_first_overhaul: Date,
@@ -54,20 +73,15 @@ const vehicleSchema = mongoose.Schema({
     type: Boolean,
     default: true,
   },
+
+  // * * Vehicle Daily Running
   total_kilo_meter: {
     type: Number,
     default: 0,
   },
-  odometer_log: [
-    {
-      km_run: Number,
-      km_diff: Number,
-      date: {
-        type: Date,
-        default: Date.now(),
-      },
-    },
-  ],
+  odometer_log: odometerLogSchema,
+
+  // * * Vehicle Fuel Log
   fuel: {
     type: Number,
     default: 0,
@@ -76,32 +90,15 @@ const vehicleSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
-  total: {
-    type: Number,
-    default: 0,
-  },
+
+  fuel_log: fuelLogSchema,
+
   kmpl: {
     type: Number,
     default: 10,
   },
-  category: { type: String, default: "LMV" },
   
-  fuel_log: [
-    {
-      current_fuel: Number,
-      fuel_diff: Number,
-      date: {
-        type: Date,
-        default: Date.now(),
-      },
-    },
-  ],
-  missions: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "duties",
-    },
-  ],
+  category: { type: String, default: "LMV" },
   jobCards: [
     {
       type: Schema.Types.ObjectId,

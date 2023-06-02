@@ -98,6 +98,39 @@ route.post("/issue/add", async (req, res) => {
   }
 });
 
+route.post("/sign/add/:as", async (req, res) => {
+  try {
+    let signAs = req.params.as;
+    const issue_id = req.body.voucherID;
+    let update = {
+      $set: {},
+    };
+    update.$set[signAs] = {
+      name: req.loggedUser.name,
+      designation: req.loggedUser.role,
+      date: Date.now(),
+      signature: true,
+    };
+
+    const foundIssue = await Issue.findByIdAndUpdate(issue_id, update);
+    const foundOrder = await Order.findByIdAndUpdate(issue_id, update);
+
+    if (foundIssue) {
+      res.send({
+        status: 200,
+        message: "SIGNATURE ADDED",
+      });
+    } else {
+      res.send({
+        status: 200,
+        message: "SIGNATURE ADDED",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 route.get("/issue/:id", async (req, res) => {
   try {
     const foundIssue = await Issue.findById(req.params.id);

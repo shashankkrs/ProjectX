@@ -1,6 +1,6 @@
 const mongoose=require('mongoose');
 
-const defectMemoSchema=mongoose.Schema({
+const defectMemoSchema=new mongoose.Schema({
     vehicle_id:{
         type: mongoose.Schema.Types.ObjectId,
         ref:'vehicles'

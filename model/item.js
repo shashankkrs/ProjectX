@@ -1,6 +1,6 @@
 const mongoose =require('mongoose');
 
-const itemSchema=mongoose.Schema({
+const itemSchema=new mongoose.Schema({
     
     name: String,
     quantity:Number,

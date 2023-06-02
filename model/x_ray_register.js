@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const xRayRegisterSchema = mongoose.Schema({
+const xRayRegisterSchema =new mongoose.Schema({
   vehicle_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "vehicles",

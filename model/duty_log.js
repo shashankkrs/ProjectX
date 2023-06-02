@@ -6,7 +6,7 @@ const signatureSchema = new mongoose.Schema({
   signature: Boolean,
 });
 
-const dutyLogSchema = mongoose.Schema({
+const dutyLogSchema =new mongoose.Schema({
   vehicle: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "vehicles",
@@ -17,7 +17,7 @@ const dutyLogSchema = mongoose.Schema({
   },
   creation_date: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
   date: Date,
   indent_no: String,

@@ -1,6 +1,6 @@
 const mongoose=require('mongoose')
 
-const jobCardSchema=mongoose.Schema({
+const jobCardSchema=new mongoose.Schema({
     vehicle_id:mongoose.Schema.Types.ObjectId,
     date:String,
     mechanic_name:String,

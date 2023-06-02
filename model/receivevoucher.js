@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const receiveVoucherSchema = mongoose.Schema({
+const receiveVoucherSchema =new mongoose.Schema({
     vehicle_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "vehicles",

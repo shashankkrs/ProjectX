@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const oilbalance_schema = mongoose.Schema({
+const oilbalance_schema =new mongoose.Schema({
   Date: Date,
   recived: Boolean,
   issued: Boolean,

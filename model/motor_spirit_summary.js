@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const motorSpiritSummmarySchema = mongoose.Schema({
+const motorSpiritSummmarySchema =new mongoose.Schema({
   vehicle_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "vehicles",

@@ -6,7 +6,8 @@ const { v4: uuid } = require("uuid");
 const path = require("path");
 const mime = require("mime");
 const fs = require("fs");
-const {exec} = require("child_process");
+const { exec } = require("child_process");
+const { changeVehicleBackground } = require("../controller/functions");
 
 route.use(fileUpload());
 
@@ -58,13 +59,6 @@ route.post("/crp_no", async (req, res) => {
 
 route.post("/:id/delete", async (req, res) => {
   try {
-    // const vehicle = await Vehicle.findOneAndUpdate(
-    //   { _id: req.params.id },
-    //   {
-    //     deleted: true,
-    //     vehicle_crp_no: 0,
-    //   }
-    // );
     const vehicle = await Vehicle.findByIdAndDelete(req.params.id);
     if (vehicle) {
       res.send("F");
@@ -78,262 +72,49 @@ route.post("/:id/delete", async (req, res) => {
 
 route.post("/:id/update", async (req, res) => {
   try {
+    let vehicleID = req.params.id;
+    let uploadFolder = path.join(
+      __dirname,
+      "..",
+      "public/images/vehicle_images"
+    );
+    let images = [];
     if (req.files) {
-      let front_view = req.files.front_view;
-      if (front_view) {
-        var ext;
-        switch (front_view.mimetype) {
-          case "image/gif":
-            ext = ".gif";
-            break;
-          case "image/jpeg":
-            ext = ".jpeg";
-            break;
-          case "image/png":
-            ext = ".png";
-            break;
-          default:
-            ext = "";
-            break;
-        }
-        let pic_name = req.params.id + "-front";
-        let uploadPath =
-          __dirname + "/../public/images/vehicle_images/" + pic_name + ext;
-        req.body.front_view = pic_name + ext;
-        front_view.mv(uploadPath);
-
-        // Remove Background
-        let inputImage = path.join(
-          __dirname,
-          "..",
-          "public/images/vehicle_images/" + pic_name + ext
-        );
-
-        let outputImage = path.join(
-          __dirname,
-          "..",
-          "public/images/temppic/" + pic_name + ext
-        );
-
-        const command = `rembg i ${inputImage} ${outputImage}`;
-        exec(command, (err, stdout, stderr) => {
-          if (err) {
-            // res.send(foundUser);
-            return;
-          } else {
-            console.log("Image Background Removed");
-            fs.renameSync(outputImage, inputImage);
-            // res.send(foundUser);
-            return;
-          }
-        });
-      }
-      let back_view = req.files.back_view;
-      if (back_view) {
-        var ext;
-        switch (back_view.mimetype) {
-          case "image/gif":
-            ext = ".gif";
-            break;
-          case "image/jpeg":
-            ext = ".jpeg";
-            break;
-          case "image/png":
-            ext = ".png";
-            break;
-          default:
-            ext = "";
-            break;
-        }
-        let pic_name = req.params.id + "-back";
-        let uploadPath =
-          __dirname + "/../public/images/vehicle_images/" + pic_name + ext;
-        req.body.back_view = pic_name + ext;
-        back_view.mv(uploadPath);
-
-        // Remove Background
-        let inputImage = path.join(
-          __dirname,
-          "..",
-          "public/images/vehicle_images/" + pic_name + ext
-        );
-
-        let outputImage = path.join(
-          __dirname,
-          "..",
-          "public/images/temppic/" + pic_name + ext
-        );
-
-        const command = `rembg i ${inputImage} ${outputImage}`;
-        exec(command, (err, stdout, stderr) => {
-          if (err) {
-            // res.send(foundUser);
-            return;
-          } else {
-            console.log("Image Background Removed");
-            fs.renameSync(outputImage, inputImage);
-            // res.send(foundUser);
-            return;
-          }
-        });
-      }
-      let top_view = req.files.top_view;
-      if (top_view) {
-        var ext;
-        switch (top_view.mimetype) {
-          case "image/gif":
-            ext = ".gif";
-            break;
-          case "image/jpeg":
-            ext = ".jpeg";
-            break;
-          case "image/png":
-            ext = ".png";
-            break;
-          default:
-            ext = "";
-            break;
-        }
-        let pic_name = req.params.id + "-top";
-        let uploadPath =
-          __dirname + "/../public/images/vehicle_images/" + pic_name + ext;
-        req.body.top_view = pic_name + ext;
-        top_view.mv(uploadPath);
-
-        // Remove Background
-        let inputImage = path.join(
-          __dirname,
-          "..",
-          "public/images/vehicle_images/" + pic_name + ext
-        );
-
-        let outputImage = path.join(
-          __dirname,
-          "..",
-          "public/images/temppic/" + pic_name + ext
-        );
-
-        const command = `rembg i ${inputImage} ${outputImage}`;
-        exec(command, (err, stdout, stderr) => {
-          if (err) {
-            // res.send(foundUser);
-            return;
-          } else {
-            console.log("Image Background Removed");
-            fs.renameSync(outputImage, inputImage);
-            // res.send(foundUser);
-            return;
-          }
-        });
-      }
-      let right_view = req.files.right_view;
-      if (right_view) {
-        var ext;
-        switch (right_view.mimetype) {
-          case "image/gif":
-            ext = ".gif";
-            break;
-          case "image/jpeg":
-            ext = ".jpeg";
-            break;
-          case "image/png":
-            ext = ".png";
-            break;
-          default:
-            ext = "";
-            break;
-        }
-        let pic_name = req.params.id + "-right";
-        let uploadPath =
-          __dirname + "/../public/images/vehicle_images/" + pic_name + ext;
-        req.body.right_view = pic_name + ext;
-        right_view.mv(uploadPath);
-
-        // Remove Background
-        let inputImage = path.join(
-          __dirname,
-          "..",
-          "public/images/vehicle_images/" + pic_name + ext
-        );
-
-        let outputImage = path.join(
-          __dirname,
-          "..",
-          "public/images/temppic/" + pic_name + ext
-        );
-
-        const command = `rembg i ${inputImage} ${outputImage}`;
-        exec(command, (err, stdout, stderr) => {
-          if (err) {
-            // res.send(foundUser);
-            return;
-          } else {
-            console.log("Image Background Removed");
-            fs.renameSync(outputImage, inputImage);
-            // res.send(foundUser);
-            return;
-          }
-        });
-      }
-      let left_view = req.files.left_view;
-      if (left_view) {
-        var ext;
-        switch (left_view.mimetype) {
-          case "image/gif":
-            ext = ".gif";
-            break;
-          case "image/jpeg":
-            ext = ".jpeg";
-            break;
-          case "image/png":
-            ext = ".png";
-            break;
-          default:
-            ext = "";
-            break;
-        }
-        let pic_name = req.params.id + "-left";
-        let uploadPath =
-          __dirname + "/../public/images/vehicle_images/" + pic_name + ext;
-        req.body.left_view = pic_name + ext;
-        left_view.mv(uploadPath);
-
-        // Remove Background
-        let inputImage = path.join(
-          __dirname,
-          "..",
-          "public/images/vehicle_images/" + pic_name + ext
-        );
-
-        let outputImage = path.join(
-          __dirname,
-          "..",
-          "public/images/temppic/" + pic_name + ext
-        );
-
-        const command = `rembg i ${inputImage} ${outputImage}`;
-        exec(command, (err, stdout, stderr) => {
-          if (err) {
-            // res.send(foundUser);
-            return;
-          } else {
-            console.log("Image Background Removed");
-            fs.renameSync(outputImage, inputImage);
-            // res.send(foundUser);
-            return;
-          }
-        });
-      }
+      Object.keys(req.files).forEach((key) => {
+        let suffix = key.split("_")[0];
+        let file = req.files[key];
+        let ext = mime.getExtension(file.mimetype);
+        let filename = vehicleID + "-" + suffix + "." + ext;
+        req.body[key] = filename;
+        file.mv(path.join(uploadFolder, filename));
+        // changeBackground(filename);
+        images.push(filename);
+      });
     }
     const vehicle = await Vehicle.findOneAndUpdate(
       { _id: req.params.id },
       req.body
     );
-    if (vehicle) {
-      res.send("F");
-    } else {
-      res.send("NF");
-    }
+
+    const changeBackgroundPromises = images.map((filename) => {
+      return changeVehicleBackground(filename);
+    });
+
+    Promise.all(changeBackgroundPromises)
+      .then(() => {
+        res.send({
+          status: 200,
+          message: "Vehicle Updated",
+        });
+        return;
+      })
+      .catch((error) => {
+        res.send({
+          status: 500,
+          message: "Vehicle Updated But Background Not Changed",
+        });
+        return;
+      });
   } catch (error) {
     console.log(error);
   }
