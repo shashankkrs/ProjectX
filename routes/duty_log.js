@@ -115,7 +115,18 @@ route.get("/:id", async (req, res) => {
 //To Add New Duty Log
 route.post("/add", async (req, res) => {
   try {
+    const { in_datetime } = req.body;
+    let meter_count = req.body.meter_count ? req.body.meter_count : 0;
+    let fuel = req.body.fuel ? req.body.fuel : 0;
     const newDutyLog = new Duty_Log(req.body);
+    const getLastVehicleDuty = await Vehicle.findById(req.body.vehicle);
+    newDutyLog.km_run =
+      parseInt(meter_count) - parseInt(getLastVehicleDuty.total_kilo_meter);
+    newDutyLog.meter_count = meter_count;
+    newDutyLog.fuel = fuel;
+    newDutyLog.mission_ended = true;
+    newDutyLog.in_datetime = in_datetime;
+   
     const foundVehicle = await Vehicle.findById(req.body.vehicle);
     if (foundVehicle) {
       if (req.body.mission_ended === "false") {
@@ -124,9 +135,14 @@ route.post("/add", async (req, res) => {
       } else {
         foundVehicle.available = true;
         foundVehicle.odometer_log.push({
-          km_diff: meter_count - foundVehicle.km_run,
+          km_diff:
+            parseInt(meter_count) - parseInt(foundVehicle.total_kilo_meter),
           km_run: meter_count,
-          date: Date.now,
+        });
+        foundVehicle.total_kilo_meter = meter_count;
+        foundVehicle.fuel_log.push({
+          current_fuel: fuel,
+          fuel_diff: fuel - foundVehicle.fuel,
         });
         foundVehicle.fuel = fuel;
         foundVehicle.save();
@@ -164,19 +180,18 @@ route.put("/update/:id", async (req, res) => {
     if (foundDuty) {
       foundDuty.km_run =
         parseInt(meter_count) - parseInt(foundDuty.meter_count);
-      foundDuty.meter_count = meter_count - foundDuty.meter_count;
+      foundDuty.meter_count = meter_count;
       foundDuty.fuel = fuel;
       foundDuty.mission_ended = true;
       foundDuty.in_datetime = in_datetime;
-      console.log(foundDuty);
-      // foundDuty.save();
+      foundDuty.save();
     }
 
     const foundVehicle = await Vehicle.findById(foundDuty.vehicle);
     if (foundVehicle) {
       if (req.body.mission_ended === "false") {
         foundVehicle.available = false;
-        // foundVehicle.save();
+        foundVehicle.save();
       } else {
         foundVehicle.available = true;
         foundVehicle.odometer_log.push({
@@ -190,7 +205,7 @@ route.put("/update/:id", async (req, res) => {
           fuel_diff: fuel - foundVehicle.fuel,
         });
         foundVehicle.fuel = fuel;
-        // foundVehicle.save();
+        foundVehicle.save();
       }
     }
 
@@ -198,10 +213,10 @@ route.put("/update/:id", async (req, res) => {
     if (foundDriver) {
       if (req.body.mission_ended === "false") {
         foundDriver.available = false;
-        // foundDriver.save();
+        foundDriver.save();
       } else {
         foundDriver.available = true;
-        // foundDriver.save();
+        foundDriver.save();
       }
     }
 

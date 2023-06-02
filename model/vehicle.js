@@ -79,7 +79,8 @@ const vehicleSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  odometer_log: odometerLogSchema,
+
+  odometer_log: [odometerLogSchema],
 
   // * * Vehicle Fuel Log
   fuel: {
@@ -91,13 +92,13 @@ const vehicleSchema = new mongoose.Schema({
     default: 0,
   },
 
-  fuel_log: fuelLogSchema,
+  fuel_log: [fuelLogSchema],
 
   kmpl: {
     type: Number,
     default: 10,
   },
-  
+
   category: { type: String, default: "LMV" },
   jobCards: [
     {
