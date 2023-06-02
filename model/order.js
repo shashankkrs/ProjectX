@@ -11,16 +11,23 @@ const signatureSchema = new mongoose.Schema({
 });
 
 const orderSchema = mongoose.Schema({
-  sno: Number,
+  sno: {
+    type: Number,
+    default: 0,
+  },
   voucher_no: String,
   station: String,
-  date: Date,
+  date: {
+    type: Date,
+    default: Date.now,
+  },
   items: [
     {
       item: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "item",
       },
+      new_quantity: Number,
       rate: Number,
       quantity: Number,
       amount: Number,

@@ -120,13 +120,7 @@ route.post("/add", async (req, res) => {
     let fuel = req.body.fuel ? req.body.fuel : 0;
     const newDutyLog = new Duty_Log(req.body);
     const getLastVehicleDuty = await Vehicle.findById(req.body.vehicle);
-    newDutyLog.km_run =
-      parseInt(meter_count) - parseInt(getLastVehicleDuty.total_kilo_meter);
-    newDutyLog.meter_count = meter_count;
-    newDutyLog.fuel = fuel;
-    newDutyLog.mission_ended = true;
-    newDutyLog.in_datetime = in_datetime;
-   
+
     const foundVehicle = await Vehicle.findById(req.body.vehicle);
     if (foundVehicle) {
       if (req.body.mission_ended === "false") {
@@ -134,6 +128,7 @@ route.post("/add", async (req, res) => {
         foundVehicle.save();
       } else {
         foundVehicle.available = true;
+        newDutyLog.mission_ended = true;
         foundVehicle.odometer_log.push({
           km_diff:
             parseInt(meter_count) - parseInt(foundVehicle.total_kilo_meter),
@@ -146,6 +141,12 @@ route.post("/add", async (req, res) => {
         });
         foundVehicle.fuel = fuel;
         foundVehicle.save();
+        newDutyLog.km_run =
+          parseInt(meter_count) - parseInt(getLastVehicleDuty.total_kilo_meter);
+        newDutyLog.meter_count = meter_count;
+        newDutyLog.fuel = fuel;
+
+        newDutyLog.in_datetime = in_datetime;
       }
     }
 
@@ -157,6 +158,7 @@ route.post("/add", async (req, res) => {
       } else {
         foundDriver.available = true;
         foundDriver.save();
+        newDutyLog.mission_ended = true;
       }
     }
     newDutyLog.save();
@@ -225,5 +227,20 @@ route.put("/update/:id", async (req, res) => {
     console.log(error);
   }
 });
+
+//To Query One Active Duty Request Paramter ID
+route.get("/active/:id", async (req, res) => {
+  try {
+    const dutyID = req.params.id;
+    const foundDuty = await Duty_Log.findOne({
+      _id: dutyID,
+      mission_ended: false,
+    }).populate("vehicle");
+    res.send(foundDuty);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 
 module.exports = route;

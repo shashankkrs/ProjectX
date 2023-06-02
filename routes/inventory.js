@@ -32,6 +32,7 @@ route.post("/order/add", async (req, res) => {
       let id = item.item;
       Item.findById(id).exec((err, found_item) => {
         found_item.quantity = found_item.quantity + parseInt(item.quantity);
+        item.new_quantity = found_item.quantity + parseInt(item.quantity);
         found_item.save();
       });
     });
@@ -84,6 +85,7 @@ route.post("/issue/add", async (req, res) => {
       let id = item.item;
       Item.findById(id).exec((err, found_item) => {
         found_item.quantity = found_item.quantity - parseInt(item.quantity);
+        item.new_quantity = found_item.quantity - parseInt(item.quantity);
         found_item.save();
       });
     });
@@ -126,6 +128,22 @@ route.post("/sign/add/:as", async (req, res) => {
         message: "SIGNATURE ADDED",
       });
     }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+
+route.get("/item_history/:id", async (req, res) => {
+  try {
+    const item_id = req.params.id;
+    const foundIssue = await Issue.find({ "items.item": item_id }).populate(
+      "items.item"
+    );
+    const foundOrder = await Order.find({ "items.item": item_id }).populate(
+      "items.item"
+    );
+    res.send([...foundIssue, ...foundOrder]);
   } catch (error) {
     console.log(error);
   }
