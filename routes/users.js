@@ -199,7 +199,11 @@ route.put("/update/:id", async (req, res) => {
         } else {
           console.log("Image Background Removed");
           fs.renameSync(outputImage, inputImage);
-          res.send(foundUser);
+          res.send({
+            status: 200,
+            message: "User Updated",
+            user: foundUser._id,
+          });
           return;
         }
       });
