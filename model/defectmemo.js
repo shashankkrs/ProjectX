@@ -1,28 +1,54 @@
-const mongoose=require('mongoose');
+const mongoose = require("mongoose");
 
-const defectMemoSchema=new mongoose.Schema({
-    vehicle_id:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref:'vehicles'
-    },
-    vehicle_no:String,
-    vehicle_model:Number,
-    vehicle_make:String,
-    vehicle_type:String,
-    date:Date,
-    kilometers_run:Number,
-    condition_of_engine:String,
-    signature:Boolean,
-    designation:String,
-    defect:String,
-    defect_reason:String,
-    suggestion:String,
-    required_parts:String,
-    availability_of_parts:Boolean,
-    execution_report:String,
-    remarks:String
+const defectSchema = new mongoose.Schema({
+  name: String,
+  reason: String,
+  remedy_suggestion: String,
 });
 
-const defectMemoModel=mongoose.model('defectmemos',defectMemoSchema);
+const signatureSchema = new mongoose.Schema({
+  name: String,
+  designation: String,
+  signature: Boolean,
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
-module.exports=defectMemoModel;
+const jobWorksSchema = new mongoose.Schema({
+  name: String,
+});
+
+const partsSchema = new mongoose.Schema({
+  balance: Number,
+  difference: Number,
+  id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "item",
+  },
+  name: String,
+  quantity: Number,
+});
+
+const defectMemoSchema = new mongoose.Schema({
+  vehicle: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "vehicles",
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+  condition_of_engine: String,
+  defects: [defectSchema],
+  job_works: [jobWorksSchema],
+  parts: [partsSchema],
+  remarks: String,
+  sign_mto: signatureSchema,
+  sign_simm: signatureSchema,
+});
+
+const defectMemoModel = mongoose.model("defectmemos", defectMemoSchema);
+
+module.exports = defectMemoModel;

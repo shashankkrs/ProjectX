@@ -6,7 +6,7 @@ const signatureSchema = new mongoose.Schema({
   signature: Boolean,
 });
 
-const dutyLogSchema =new mongoose.Schema({
+const dutyLogSchema = new mongoose.Schema({
   vehicle: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "vehicles",
