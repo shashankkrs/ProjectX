@@ -1,5 +1,5 @@
 const express = require('express');
-const Inspection = require('../model/inspection/inspection');
+const Inspection = require('../model/inspection');
 const route = express.Router();
 
 

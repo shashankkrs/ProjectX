@@ -108,10 +108,13 @@ route.post("/add", async (req, res) => {
       const hash = bcrypt.hashSync(password, salt);
       newUser.password = hash;
       newUser.profile_pic = profile_pic_id + ext;
-      console.log(newUser);
       newUser.save();
 
-      res.send("NEW USER CREATED");
+      res.send({
+        status: 200,
+        message: "User Added",
+        user: newUser._id,
+      });
     }
   } catch (error) {
     console.log(error);
@@ -197,7 +200,6 @@ route.put("/update/:id", async (req, res) => {
           res.send(foundUser);
           return;
         } else {
-          console.log("Image Background Removed");
           fs.renameSync(outputImage, inputImage);
           res.send({
             status: 200,

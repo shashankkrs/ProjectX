@@ -48,7 +48,7 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.static("public"));
+// app.use(express.static("public"));
 
 //Importing User Model
 const User = require("./model/user");
@@ -72,7 +72,7 @@ const isLoggedIn = async (req, res, next) => {
   try {
     var token = req.cookies.token;
     if (req.cookies.token) {
-      var decoded = await jwt.verify(token, process.env.JWT_SIGNATURE);
+      var decoded = jwt.verify(token, process.env.JWT_SIGNATURE);
       const loggedUser = await User.findOne({ _id: decoded.userID });
       if (loggedUser) {
         req.loggedUser = loggedUser;
@@ -92,7 +92,7 @@ app.post("/checklogin", async (req, res) => {
   try {
     var token = req.cookies.token;
     if (req.cookies.token) {
-      var decoded = await jwt.verify(token, process.env.JWT_SIGNATURE);
+      var decoded = jwt.verify(token, process.env.JWT_SIGNATURE);
       const loggedUser = await User.findOne({ _id: decoded.userID });
       if (loggedUser) {
         res.send({
@@ -123,7 +123,7 @@ app.post("/register", async (req, res) => {
     } else {
       const salt = bcrypt.genSaltSync(10);
       const hash = bcrypt.hashSync(password, salt);
-      const newUser = await new User({
+      const newUser = new User({
         username: username,
         password: hash,
       });
@@ -147,7 +147,7 @@ app.post("/login", async (req, res) => {
         foundUser.password
       );
       if (isvalidUser) {
-        var token = await jwt.sign(
+        var token = jwt.sign(
           { userID: foundUser.id },
           process.env.JWT_SIGNATURE
         );
@@ -187,7 +187,7 @@ app.post("/checktoken", async (req, res) => {
   try {
     const token = req.body.token;
     if (token) {
-      var decoded = await jwt.verify(token, process.env.JWT_SIGNATURE);
+      var decoded = jwt.verify(token, process.env.JWT_SIGNATURE);
       const loggedUser = await User.findOne(
         {
           _id: decoded.userID,
@@ -217,6 +217,24 @@ app.use("/inventory", isLoggedIn, inventoryRoute);
 app.use("/oilbalance", isLoggedIn, oilbalanceRoute);
 app.use("/receivevoucher", isLoggedIn, receiveVoucherRoute);
 app.use("/location", locationRoute);
+
+app.get("/images/profilepic/:imageName", isLoggedIn, (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "public", "images", "profilepic", req.params.imageName)
+  );
+});
+
+app.get("/images/vehicle_images/:imageName", isLoggedIn, (req, res) => {
+  res.sendFile(
+    path.join(
+      __dirname,
+      "public",
+      "images",
+      "vehicle_images",
+      req.params.imageName
+    )
+  );
+});
 
 //Socket.io
 io.on("connection", (socket) => {
