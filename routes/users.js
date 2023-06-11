@@ -129,7 +129,18 @@ route.get("/get_user_details", async (req, res) => {
     );
     const user = decoded.userID;
     const data = await User.findById(user, { password: 0 });
-    res.send(data);
+    if (data) {
+      res.send({
+        status: 200,
+        message: "User Found",
+        user: data,
+      });
+    } else {
+      res.send({
+        status: 404,
+        message: "User Not Found",
+      });
+    }
   } catch (error) {
     console.log(error);
   }

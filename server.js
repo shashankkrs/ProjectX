@@ -42,6 +42,7 @@ io.use(async (socket, next) => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+
 app.use(
   cors({
     origin: true,
@@ -78,10 +79,14 @@ const isLoggedIn = async (req, res, next) => {
         req.loggedUser = loggedUser;
         next();
       } else {
-        res.send("PLEASE LOG IN");
+        res.send({
+          status: 401,
+        });
       }
     } else {
-      res.send("PLEASE LOG IN");
+      res.send({
+        status: 401,
+      });
     }
   } catch (error) {
     console.log(error);
@@ -97,6 +102,7 @@ app.post("/checklogin", async (req, res) => {
       if (loggedUser) {
         res.send({
           status: 200,
+          user: loggedUser,
         });
       } else {
         res.send({
@@ -160,6 +166,7 @@ app.post("/login", async (req, res) => {
             status: 200,
             message: "LOGGED IN",
             token: token,
+            user: foundUser,
           });
       } else {
         res.send("WRONG PASSWORD");

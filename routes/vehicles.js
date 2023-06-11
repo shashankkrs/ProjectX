@@ -187,7 +187,17 @@ route.get("/:id", async (req, res) => {
   try {
     const vehicleID = req.params.id;
     const foundVehicle = await Vehicle.findById(vehicleID);
-    res.send(foundVehicle);
+    if (foundVehicle) {
+      res.send({
+        status: 200,
+        vehicle: foundVehicle,
+      });
+    } else {
+      res.send({
+        status: 404,
+        message: "Vehicle Not Found",
+      });
+    }
   } catch (error) {
     console.log(error);
   }
