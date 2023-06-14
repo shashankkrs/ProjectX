@@ -23,6 +23,7 @@ coverage
 *.lcov
 .vscode
 
+public/images/
 
 # nyc test coverage
 .nyc_output
