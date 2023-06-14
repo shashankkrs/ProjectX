@@ -67,6 +67,7 @@ const oilbalanceRoute = require("./routes/oilbalance");
 const inspectionRoute = require("./routes/inspection");
 const locationRoute = require("./routes/location");
 const receiveVoucherRoute = require("./model/receivevoucher");
+const communityRoute = require("./routes/community");
 
 //Defining Functions
 const isLoggedIn = async (req, res, next) => {
@@ -224,10 +225,43 @@ app.use("/inventory", isLoggedIn, inventoryRoute);
 app.use("/oilbalance", isLoggedIn, oilbalanceRoute);
 app.use("/receivevoucher", isLoggedIn, receiveVoucherRoute);
 app.use("/location", locationRoute);
+app.use("/community", isLoggedIn, communityRoute);
 
 app.get("/images/profilepic/:imageName", isLoggedIn, (req, res) => {
   res.sendFile(
     path.join(__dirname, "public", "images", "profilepic", req.params.imageName)
+  );
+});
+
+app.get("/images/temp_post_images/:imageName", isLoggedIn, (req, res) => {
+  let imageName = req.params.imageName;
+  let postID = imageName.split("_")[0];
+  let imageNumber = imageName.split("_")[1];
+  res.sendFile(
+    path.join(
+      __dirname,
+      "public",
+      "images",
+      "temp_post_images",
+      postID,
+      imageNumber
+    )
+  );
+});
+
+app.get("/images/post_images/:imageName", isLoggedIn, (req, res) => {
+  let imageName = req.params.imageName;
+  let postID = imageName.split("_")[0];
+  let imageNumber = imageName.split("_")[1];
+  res.sendFile(
+    path.join(
+      __dirname,
+      "public",
+      "images",
+      "post_images",
+      postID,
+      imageNumber
+    )
   );
 });
 
