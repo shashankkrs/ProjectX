@@ -8,7 +8,6 @@ const path = require("path");
 const fs = require("fs");
 const Post = require("../model/post");
 const Comments = require("../model/comments");
-
 const fsExtra = require("fs-extra");
 
 router.use(
@@ -18,7 +17,17 @@ router.use(
 );
 
 router.get("/posts", async (req, res) => {
-  const posts = await Post.find({}).sort({ _id: -1 }).populate("createdBy");
+  const posts = await Post.find({})
+    .sort({ _id: -1 })
+    .populate("createdBy")
+    .populate("repostFrom")
+    .populate({
+      path: "repostFrom",
+      populate: {
+        path: "createdBy",
+        model: "users",
+      },
+    });
   res.send(posts);
 });
 
@@ -64,6 +73,14 @@ router.post("/posts/post/comment/:id", async (req, res) => {
       .populate("likes")
       .populate({
         path: "comments",
+        populate: {
+          path: "createdBy",
+          model: "users",
+        },
+      })
+      .populate("repostFrom")
+      .populate({
+        path: "repostFrom",
         populate: {
           path: "createdBy",
           model: "users",
@@ -120,10 +137,15 @@ router.post("/posts/temp_post/save_changes", async (req, res) => {
   const postID = req.body.postid;
   const content = req.body.data;
   const title = req.body.title;
+  const type = req.body.type;
+  const repostForID = req.body.repostForID;
+  console.log(req.body);
   const tempPost = await TempPosts.findOne({ _id: postID });
   if (tempPost) {
     tempPost.content = content;
     tempPost.title = title;
+    tempPost.type = type;
+    tempPost.repostFrom = repostForID;
     tempPost.save();
   }
   res.send({
@@ -165,6 +187,9 @@ router.post("/posts/post", async (req, res) => {
     const newPost = new Post({
       content: tempPost.content.replace(/temp_post_images/g, "post_images"),
       createdBy: tempPost.createdBy,
+      title: tempPost.title,
+      type: tempPost.type,
+      repostFrom: tempPost.repostFrom,
       images: tempPost.images.filter((image) => {
         return images.includes(image.name);
       }),

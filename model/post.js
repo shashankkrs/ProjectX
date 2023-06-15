@@ -6,7 +6,12 @@ const imagesSchema = new mongoose.Schema({
 
 const tempPostSchema = new mongoose.Schema({
   title: String,
+  type: String,
   content: String,
+  repostFrom: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "posts",
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",

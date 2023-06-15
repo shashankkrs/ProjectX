@@ -8,6 +8,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const cors = require("cors");
+const fs = require("fs");
 
 //Creating Express App
 const app = express();
@@ -226,27 +227,74 @@ app.use("/oilbalance", isLoggedIn, oilbalanceRoute);
 app.use("/receivevoucher", isLoggedIn, receiveVoucherRoute);
 app.use("/location", locationRoute);
 app.use("/community", isLoggedIn, communityRoute);
+app.use("/inspection", isLoggedIn, inspectionRoute);
 
 app.get("/images/profilepic/:imageName", isLoggedIn, (req, res) => {
-  res.sendFile(
-    path.join(__dirname, "public", "images", "profilepic", req.params.imageName)
-  );
+  //If is Exists The File Then Send
+  if (
+    !fs.existsSync(
+      path.join(
+        __dirname,
+        "public",
+        "images",
+        "profilepic",
+        req.params.imageName
+      )
+    )
+  ) {
+    res.sendFile(
+      path.join(__dirname, "public", "images", "profilepic", "default.png")
+    );
+  } else {
+    res.sendFile(
+      path.join(
+        __dirname,
+        "public",
+        "images",
+        "profilepic",
+        req.params.imageName
+      )
+    );
+  }
 });
 
 app.get("/images/temp_post_images/:imageName", isLoggedIn, (req, res) => {
   let imageName = req.params.imageName;
   let postID = imageName.split("_")[0];
   let imageNumber = imageName.split("_")[1];
-  res.sendFile(
-    path.join(
-      __dirname,
-      "public",
-      "images",
-      "temp_post_images",
-      postID,
-      imageNumber
+  if (
+    !fs.existsSync(
+      path.join(
+        __dirname,
+        "public",
+        "images",
+        "temp_post_images",
+        postID,
+        imageNumber
+      )
     )
-  );
+  ) {
+    res.sendFile(
+      path.join(
+        __dirname,
+        "public",
+        "images",
+        "temp_post_images",
+        "default.png"
+      )
+    );
+  } else {
+    res.sendFile(
+      path.join(
+        __dirname,
+        "public",
+        "images",
+        "temp_post_images",
+        postID,
+        imageNumber
+      )
+    );
+  }
 });
 
 app.get("/images/post_images/:imageName", isLoggedIn, (req, res) => {
@@ -254,14 +302,7 @@ app.get("/images/post_images/:imageName", isLoggedIn, (req, res) => {
   let postID = imageName.split("_")[0];
   let imageNumber = imageName.split("_")[1];
   res.sendFile(
-    path.join(
-      __dirname,
-      "public",
-      "images",
-      "post_images",
-      postID,
-      imageNumber
-    )
+    path.join(__dirname, "public", "images", "post_images", postID, imageNumber)
   );
 });
 
