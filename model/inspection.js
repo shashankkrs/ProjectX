@@ -15,6 +15,7 @@ const vehicleSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "vehicles",
   },
+  maintaining_unit: String,
   engine: {
     compression: defectSchema,
     cooling_system: defectSchema,

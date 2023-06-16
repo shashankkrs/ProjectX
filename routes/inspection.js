@@ -4,8 +4,19 @@ const route = express.Router();
 
 route.get("/", async (req, res) => {
   try {
-    const inspectionList = await Inspection.find().populate('vehicle');
+    const inspectionList = await Inspection.find().populate("vehicle");
     res.send(inspectionList);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+route.get("/:id", async (req, res) => {
+  try {
+    const inspection = await Inspection.findById(req.params.id).populate(
+      "vehicle"
+    );
+    res.send(inspection);
   } catch (error) {
     console.log(error);
   }
