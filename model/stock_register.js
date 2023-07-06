@@ -15,6 +15,8 @@ const orderSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
+  isIssue: Boolean,
+  isRecieve: Boolean,
   voucher_no: String,
   station: String,
   date: {
@@ -37,5 +39,5 @@ const orderSchema = mongoose.Schema({
   sign_mtic: signatureSchema,
   sign_polhavaldar: signatureSchema,
 });
-const orderModel = mongoose.model("order", orderSchema);
+const orderModel = mongoose.model("stock_register", orderSchema);
 module.exports = orderModel;

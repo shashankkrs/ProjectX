@@ -1,15 +1,16 @@
 const express = require("express");
 const route = express.Router();
 const Issue = require("../model/issue.js");
-const Order = require("../model/order.js");
+const StockRegister = require("../model/stock_register.js");
 const Item = require("../model/item.js");
 
-route.get("/order", async (req, res) => {
+route.get("/last_voucher/sno", async (req, res) => {
   try {
-    const lastOrder = await Order.find().sort({ _id: -1 }).limit(1);
-    const temp = lastOrder[0].sno;
-    const lastsno = temp.toString();
-    res.send(lastsno);
+    const lastOrder = await StockRegister.find().sort({ _id: -1 }).limit(1);
+    if (lastOrder.length > 0) {
+      res.send(lastOrder[0].sno);
+    }
+    res.send("0");
   } catch (error) {
     console.log(error);
   }
@@ -132,7 +133,6 @@ route.post("/sign/add/:as", async (req, res) => {
     console.log(error);
   }
 });
-
 
 route.get("/item_history/:id", async (req, res) => {
   try {

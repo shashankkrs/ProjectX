@@ -20,7 +20,7 @@ route.get("/", async (req, res) => {
       {
         fuel_log: 0,
       }
-    );
+    ).populate("fuel_type");
     res.send(vehicleList);
   } catch (error) {
     console.log(error);
@@ -91,10 +91,19 @@ route.post("/:id/update", async (req, res) => {
         images.push(filename);
       });
     }
+
     const vehicle = await Vehicle.findOneAndUpdate(
       { _id: req.params.id },
       req.body
     );
+
+    if (req.body.current_kmpl) {
+      vehicle.kmpl_log.push({
+        kmpl: req.body.current_kmpl,
+        date: new Date(),
+      });
+      vehicle.save();
+    }
 
     const changeBackgroundPromises = images.map((filename) => {
       return changeVehicleBackground(filename);
@@ -186,7 +195,9 @@ route.post("/:id/update_km_run", async (req, res) => {
 route.get("/:id", async (req, res) => {
   try {
     const vehicleID = req.params.id;
-    const foundVehicle = await Vehicle.findById(vehicleID);
+    const foundVehicle = await Vehicle.findById(vehicleID).populate(
+      "fuel_type"
+    );
     if (foundVehicle) {
       res.send({
         status: 200,

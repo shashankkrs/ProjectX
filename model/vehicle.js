@@ -1,6 +1,24 @@
 const mongoose = require("mongoose");
 const { Schema } = require("mongoose");
 
+const ExpenseSchema = new Schema({
+  expense_type: String,
+  expense_amount: Number,
+  expense_date: {
+    type: Date,
+    default: Date.now,
+  },
+  expense_description: String,
+});
+
+const KmplLogSchema = new Schema({
+  kmpl: Number,
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 const odometerLogSchema = new mongoose.Schema({
   km_run: Number,
   km_diff: Number,
@@ -92,12 +110,13 @@ const vehicleSchema = new mongoose.Schema({
     default: 0,
   },
 
-  fuel_log: [fuelLogSchema],
-
-  kmpl: {
-    type: Number,
-    default: 10,
+  fuel_type: {
+    type: Schema.Types.ObjectId,
+    ref: "oil",
+    default: "64732527cd0bb4693e7749fe",
   },
+
+  fuel_log: [fuelLogSchema],
 
   category: { type: String, default: "LMV" },
   jobCards: [
@@ -112,6 +131,14 @@ const vehicleSchema = new mongoose.Schema({
       ref: "defect_memo",
     },
   ],
+
+  current_kmpl: {
+    type: Number,
+    default: 0,
+  },
+
+  kmpl_log: [KmplLogSchema],
+  expense_log: [ExpenseSchema],
 });
 
 const vehicleModel = mongoose.model("vehicles", vehicleSchema);

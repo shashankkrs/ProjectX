@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const oilSchema =new mongoose.Schema({
+const oilSchema = new mongoose.Schema({
   type: String,
   balance: {
     type: Number,
@@ -9,6 +9,10 @@ const oilSchema =new mongoose.Schema({
   last_updated: {
     type: Date,
     default: Date.now,
+  },
+  current_rate: {
+    type: Number,
+    default: 0,
   },
 });
 

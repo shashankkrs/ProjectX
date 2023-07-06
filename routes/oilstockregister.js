@@ -79,6 +79,18 @@ route.get("/last1", async (req, res) => {
   }
 });
 
+route.get("/lastiv", async (req, res) => {
+  try {
+    const lastiv = await oilstockRegister
+      .findOne({ recieved: true, type: req.body.type })
+      .sort({ slno: -1 })
+      .limit(1);
+    res.send(lastiv);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 route.get("/log", async (req, res) => {
   try {
     const oilbalance = await oilstockRegister
@@ -113,32 +125,53 @@ route.post("/allot", async (req, res) => {
     let body = {
       ...req.body,
       issued: true,
+      date: Date.now(),
     };
-    if (req.body.vehicle&&req.body.for==="vehicle_fuel") {
+    console.log(req.body);
+    if (parseFloat(req.body.issued_amount) >= req.body.previous_balance) {
+      res.send({
+        status: 400,
+        message: `Issued Amount is Greater Than Oil Balance or Invalid Amount Entered`,
+      });
+      return;
+    }
+    if (req.body.vehicle && req.body.for === "vehicle_fuel") {
       const vehicle = await Vehicle.findById(req.body.vehicle, {
         fuel: 1,
         fuel_log: 1,
+        fuel_capacity: 1,
       });
+      console.log(vehicle.fuel_capacity, vehicle.fuel, req.body.issued_amount);
+      if (
+        parseFloat(req.body.issued_amount) >=
+        parseFloat(vehicle.fuel_capacity) - parseFloat(vehicle.fuel)
+      ) {
+        res.send({
+          status: 400,
+          message: `Issued Amount is Greater Than Fuel Capacity of Vehicle or Invalid Amount Entered`,
+        });
+        return;
+      }
       vehicle.fuel_log.push({
-        current_fuel: parseInt(vehicle.fuel) + parseInt(req.body.issued_amount),
+        current_fuel:
+          parseFloat(vehicle.fuel) + parseFloat(req.body.issued_amount),
         date: Date.now(),
         fuel_diff: req.body.issued_amount,
       });
-      vehicle.fuel = parseInt(vehicle.fuel) + parseInt(req.body.issued_amount);
+      vehicle.fuel =
+        parseFloat(vehicle.fuel) + parseFloat(req.body.issued_amount);
       vehicle.save();
     }
 
     const newOilReg = await new oilstockRegister(body);
     const updatedOilBalance = await Oil.findByIdAndUpdate(newOilReg.type, {
-      $inc: { balance: -1 * newOilReg.issued_amount },
+      balance: req.body.new_balance,
     });
 
-    newOilReg.previous_balance = updatedOilBalance.balance;
-    if (updatedOilBalance.balance - newOilReg.issued_amount >= 0) {
-      newOilReg.current_balance =
-        updatedOilBalance.balance - newOilReg.issued_amount;
-    }
+    newOilReg.previous_balance = req.body.previous_balance;
+    newOilReg.current_balance = req.body.new_balance;
     newOilReg.save();
+
     if (newOilReg) {
       res.send({
         status: 200,
@@ -162,6 +195,7 @@ route.post("/add", async (req, res) => {
     const newOilReg = await new oilstockRegister(body);
     const updatedOilBalance = await Oil.findByIdAndUpdate(newOilReg.type, {
       $inc: { balance: newOilReg.recieved_amount },
+      current_rate: req.body.rate,
     });
     newOilReg.previous_balance = updatedOilBalance.balance;
     newOilReg.current_balance =

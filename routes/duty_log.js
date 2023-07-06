@@ -180,10 +180,11 @@ route.put("/update/:id", async (req, res) => {
     let fuel = req.body.fuel ? req.body.fuel : 0;
     const foundDuty = await Duty_Log.findById(req.params.id);
     if (foundDuty) {
-      foundDuty.km_run =
-        parseInt(meter_count) - parseInt(foundDuty.meter_count);
+      console.log(req.body.km_run);
+      foundDuty.km_run = req.body.km_run;
       foundDuty.meter_count = meter_count;
-      foundDuty.fuel = fuel;
+      foundDuty.fuel = req.body.fuel_utilized;
+      foundDuty.fuel_utilized = req.body.fuel_utilized;
       foundDuty.mission_ended = true;
       foundDuty.in_datetime = in_datetime;
       foundDuty.save();
@@ -197,14 +198,13 @@ route.put("/update/:id", async (req, res) => {
       } else {
         foundVehicle.available = true;
         foundVehicle.odometer_log.push({
-          km_diff:
-            parseInt(meter_count) - parseInt(foundVehicle.total_kilo_meter),
+          km_diff: req.body.km_run,
           km_run: meter_count,
         });
         foundVehicle.total_kilo_meter = meter_count;
         foundVehicle.fuel_log.push({
-          current_fuel: fuel,
-          fuel_diff: fuel - foundVehicle.fuel,
+          current_fuel: req.body.fuel,
+          fuel_diff: -1 * parseFloat(req.body.fuel_utilized),
         });
         foundVehicle.fuel = fuel;
         foundVehicle.save();
@@ -241,6 +241,5 @@ route.get("/active/:id", async (req, res) => {
     console.log(error);
   }
 });
-
 
 module.exports = route;
