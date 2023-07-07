@@ -9,6 +9,7 @@ const jwt = require("jsonwebtoken");
 const path = require("path");
 const cors = require("cors");
 const fs = require("fs");
+const compression = require("compression");
 
 //Creating Express App
 const app = express();
@@ -19,6 +20,8 @@ const io = require("socket.io")(server, {
     origin: "*",
   },
 });
+
+app.use(compression());
 
 io.use(async (socket, next) => {
   try {

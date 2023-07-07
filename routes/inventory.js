@@ -8,7 +8,8 @@ route.get("/last_voucher/sno", async (req, res) => {
   try {
     const lastOrder = await StockRegister.find().sort({ _id: -1 }).limit(1);
     if (lastOrder.length > 0) {
-      res.send(lastOrder[0].sno);
+      res.send(lastOrder[0].sno.toString());
+      return;
     }
     res.send("0");
   } catch (error) {
@@ -27,14 +28,21 @@ route.get("/all_orders", async (req, res) => {
 
 route.post("/order/add", async (req, res) => {
   try {
-    const newOrder = await new Order(req.body);
+    let body = {
+      ...req.body,
+      date: Date.now(),
+      isRecieve: true,
+    };
+    const newOrder = await new StockRegister(body);
     const { items } = req.body;
     items.forEach((item) => {
       let id = item.item;
       Item.findById(id).exec((err, found_item) => {
-        found_item.quantity = found_item.quantity + parseInt(item.quantity);
-        item.new_quantity = found_item.quantity + parseInt(item.quantity);
+        found_item.current_rate = item.rate;
+        found_item.balance = item.new_quantity;
+        found_item.total_cost = item.rate * item.new_quantity;
         found_item.save();
+        console.log(found_item);
       });
     });
     newOrder.save();
@@ -42,6 +50,36 @@ route.post("/order/add", async (req, res) => {
       status: 200,
       message: "NEW ORDER CREATED",
       order_id: newOrder._id,
+    });
+    console.log(newOrder);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+route.post("/issue/add", async (req, res) => {
+  try {
+    let body = {
+      ...req.body,
+      date: Date.now(),
+      isIssue: true,
+    };
+    const newIssue = await new StockRegister(body);
+    const { items } = req.body;
+    items.forEach((item) => {
+      let id = item.item;
+      Item.findById(id).exec((err, found_item) => {
+        found_item.current_rate = item.rate;
+        found_item.balance = item.new_balance;
+        found_item.total_cost = item.rate * item.new_balance;
+        found_item.save();
+      });
+    });
+    newIssue.save();
+    res.send({
+      status: 200,
+      message: "NEW ISSUE CREATED",
+      issue_id: newIssue._id,
     });
   } catch (error) {
     console.log(error);
@@ -78,6 +116,16 @@ route.get("/all_issues", async (req, res) => {
   }
 });
 
+//Get All Voucher History
+route.get("/history", async (req, res) => {
+  try {
+    const stock_register = await StockRegister.find().populate("items.item");
+    res.send(stock_register);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 route.post("/issue/add", async (req, res) => {
   try {
     const newIssue = await new Issue(req.body);
@@ -104,7 +152,7 @@ route.post("/issue/add", async (req, res) => {
 route.post("/sign/add/:as", async (req, res) => {
   try {
     let signAs = req.params.as;
-    const issue_id = req.body.voucherID;
+    const voucherID = req.body.voucherID;
     let update = {
       $set: {},
     };
@@ -115,20 +163,14 @@ route.post("/sign/add/:as", async (req, res) => {
       signature: true,
     };
 
-    const foundIssue = await Issue.findByIdAndUpdate(issue_id, update);
-    const foundOrder = await Order.findByIdAndUpdate(issue_id, update);
-
-    if (foundIssue) {
-      res.send({
-        status: 200,
-        message: "SIGNATURE ADDED",
-      });
-    } else {
-      res.send({
-        status: 200,
-        message: "SIGNATURE ADDED",
-      });
-    }
+    const updateVoucher = await StockRegister.findByIdAndUpdate(
+      voucherID,
+      update
+    );
+    res.send({
+      status: 200,
+      message: "SIGNATURE ADDED",
+    });
   } catch (error) {
     console.log(error);
   }
@@ -137,13 +179,10 @@ route.post("/sign/add/:as", async (req, res) => {
 route.get("/item_history/:id", async (req, res) => {
   try {
     const item_id = req.params.id;
-    const foundIssue = await Issue.find({ "items.item": item_id }).populate(
-      "items.item"
-    );
-    const foundOrder = await Order.find({ "items.item": item_id }).populate(
-      "items.item"
-    );
-    res.send([...foundIssue, ...foundOrder]);
+    const item_history = await StockRegister.find({
+      "items.item": item_id,
+    }).populate("items.item");
+    res.send(item_history);
   } catch (error) {
     console.log(error);
   }
@@ -160,15 +199,10 @@ route.get("/issue/:id", async (req, res) => {
 
 route.get("/voucher/:id", async (req, res) => {
   try {
-    const issue_id = req.params.id;
-    const foundIssue = await Issue.findById(issue_id).populate("items.item");
-    const foundOrder = await Order.findById(issue_id).populate("items.item");
-
-    if (foundIssue) {
-      res.send(foundIssue);
-    } else {
-      res.send(foundOrder);
-    }
+    const stock_register = await StockRegister.findById(req.params.id).populate(
+      "items.item"
+    );
+    res.send(stock_register);
   } catch (error) {
     console.log(error);
   }
