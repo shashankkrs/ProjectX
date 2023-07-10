@@ -10,6 +10,16 @@ const signatureSchema = new mongoose.Schema({
   },
 });
 
+const conversionSchema = new mongoose.Schema({
+  to_unit: String,
+  conversion_factor: String,
+});
+
+const unitSchema = new mongoose.Schema({
+  name: String,
+  conversions: [conversionSchema],
+});
+
 const orderSchema = mongoose.Schema({
   sno: {
     type: Number,
@@ -36,6 +46,12 @@ const orderSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "item",
       },
+      last_balance: Number,
+      quantity_in_unit: Number,
+      conversion_rate_to_smallest_unit: Number,
+      quantity_in_smallest_unit: Number,
+      rate_per_unit: Number,
+      current_unit: String,
       new_balance: Number,
       rate: Number,
       quantity: Number,

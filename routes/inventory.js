@@ -33,14 +33,18 @@ route.post("/order/add", async (req, res) => {
       date: Date.now(),
       isRecieve: true,
     };
+    console.log(body);
     const newOrder = await new StockRegister(body);
     const { items } = req.body;
-    items.forEach((item) => {
+    await items.forEach((item) => {
       let id = item.item;
       Item.findById(id).exec((err, found_item) => {
         found_item.current_rate = item.rate;
-        found_item.balance = item.new_quantity;
-        found_item.total_cost = item.rate * item.new_quantity;
+        found_item.balance = item.new_balance;
+        found_item.last_balance = item.last_balance;
+        found_item.change_in_balance = item.new_balance - item.last_balance;
+        found_item.total_cost = item.rate * item.new_balance;
+        found_item.last_updated = Date.now();
         found_item.save();
         console.log(found_item);
       });
@@ -51,7 +55,6 @@ route.post("/order/add", async (req, res) => {
       message: "NEW ORDER CREATED",
       order_id: newOrder._id,
     });
-    console.log(newOrder);
   } catch (error) {
     console.log(error);
   }
@@ -69,8 +72,9 @@ route.post("/issue/add", async (req, res) => {
     items.forEach((item) => {
       let id = item.item;
       Item.findById(id).exec((err, found_item) => {
-        found_item.current_rate = item.rate;
         found_item.balance = item.new_balance;
+        found_item.last_balance =
+          found_item.balance - item.quantity_in_smallest_unit;
         found_item.total_cost = item.rate * item.new_balance;
         found_item.save();
       });
@@ -219,20 +223,23 @@ route.get("/items", async (req, res) => {
 
 route.post("/items/add", async (req, res) => {
   try {
-    const { name, quantity, rate, description } = req.body;
+    const { name } = req.body;
+    console.log(req.body);
     const foundItem = await Item.findOne({ name: name });
     if (foundItem) {
-      res.send("ITEM NAME ALREADY TAKEN");
-    } else {
-      const newItem = await new Item({
-        name: name,
-        quantity: quantity,
-        rate: rate,
-        description: description,
+      res.send({
+        status: 400,
+        message: "ITEM ALREADY EXISTS",
       });
+    } else {
+      const newItem = new Item(req.body);
+      console.log(newItem);
       newItem.save();
 
-      res.send("NEW ITEM CREATED");
+      res.send({
+        status: 200,
+        message: "NEW ITEM ADDED",
+      });
     }
   } catch (error) {
     console.log(error);

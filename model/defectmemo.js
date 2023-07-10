@@ -18,6 +18,11 @@ const signatureSchema = new mongoose.Schema({
 
 const jobWorksSchema = new mongoose.Schema({
   name: String,
+  completed: {
+    type: Boolean,
+    default: false,
+  },
+  remarks: String,
 });
 
 const partsSchema = new mongoose.Schema({
