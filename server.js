@@ -72,6 +72,7 @@ const inspectionRoute = require("./routes/inspection");
 const locationRoute = require("./routes/location");
 const receiveVoucherRoute = require("./model/receivevoucher");
 const communityRoute = require("./routes/community");
+const workshopRoute = require("./routes/workshop");
 
 //Defining Functions
 const isLoggedIn = async (req, res, next) => {
@@ -231,9 +232,9 @@ app.use("/receivevoucher", isLoggedIn, receiveVoucherRoute);
 app.use("/location", locationRoute);
 app.use("/community", isLoggedIn, communityRoute);
 app.use("/inspection", isLoggedIn, inspectionRoute);
+app.use("/workshop", isLoggedIn, workshopRoute);
 
 app.get("/images/profilepic/:imageName", isLoggedIn, (req, res) => {
-  //If is Exists The File Then Send
   if (
     !fs.existsSync(
       path.join(
@@ -304,12 +305,48 @@ app.get("/images/post_images/:imageName", isLoggedIn, (req, res) => {
   let imageName = req.params.imageName;
   let postID = imageName.split("_")[0];
   let imageNumber = imageName.split("_")[1];
-  res.sendFile(
-    path.join(__dirname, "public", "images", "post_images", postID, imageNumber)
-  );
+
+  if (
+    fs.existsSync(
+      path.join(
+        __dirname,
+        "public",
+        "images",
+        "temp_post_images",
+        postID,
+        imageNumber
+      )
+    )
+  ) {
+    res.sendFile(
+      path.join(
+        __dirname,
+        "public",
+        "images",
+        "post_images",
+        postID,
+        imageNumber
+      )
+    );
+  } else {
+    res.send("IMAGE NOT FOUND");
+  }
 });
 
 app.get("/images/vehicle_images/:imageName", isLoggedIn, (req, res) => {
+  if (
+    !fs.existsSync(
+      path.join(
+        __dirname,
+        "public",
+        "images",
+        "vehicle_images",
+        req.params.imageName
+      )
+    )
+  ) {
+    res.send("IMAGE NOT FOUND");
+  }
   res.sendFile(
     path.join(
       __dirname,

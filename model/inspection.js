@@ -16,6 +16,36 @@ const vehicleSchema = new mongoose.Schema({
     ref: "vehicles",
   },
   maintaining_unit: String,
+  engine_section: {
+    name: {
+      type: String,
+      default: "ENGINE",
+    },
+  },
+  transmission_section: {
+    name: {
+      type: String,
+      default: "TRANSMISSION ETC",
+    },
+  },
+  electrical_section: {
+    name: {
+      type: String,
+      default: "ELECTRICAL",
+    },
+  },
+  lubrication_section: {
+    name: {
+      type: String,
+      default: "LUBRICATION & CLEANLINESS",
+    },
+  },
+  chassis_section: {
+    name: {
+      type: String,
+      default: "CHASSIS HULL BODY",
+    },
+  },
   engine: {
     compression: defectSchema,
     cooling_system: defectSchema,

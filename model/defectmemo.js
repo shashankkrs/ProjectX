@@ -37,6 +37,8 @@ const partsSchema = new mongoose.Schema({
 });
 
 const defectMemoSchema = new mongoose.Schema({
+  slno: Number,
+  memo_no: String,
   vehicle: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "vehicles",

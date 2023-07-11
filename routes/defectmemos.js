@@ -2,6 +2,20 @@ const express = require("express");
 const DefectMemo = require("../model/defectmemo");
 const route = express.Router();
 
+//Get Last Memo Sl No
+route.get("/lastslno", async (req, res) => {
+  try {
+    const lastMemo = await DefectMemo.find().sort({ slno: -1 }).limit(1);
+    if (lastMemo.length === 0) {
+      res.send("0");
+      return;
+    }
+    res.send(lastMemo[0].slno.toString());
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 // To Search Memo By Vehicle Id
 route.get("/vehicle/:vehicle_id", async (req, res) => {
   try {
@@ -20,9 +34,16 @@ route.post("/add", async (req, res) => {
     var newDefectMemo = new DefectMemo({ ...req.body, date: date });
     newDefectMemo.save();
     if (newDefectMemo) {
-      res.send("New Memo Added");
+      res.send({
+        status: 200,
+        message: "Memo Added",
+        memoID: newDefectMemo._id,
+      });
     } else {
-      res.send("No Memo Added");
+      res.send({
+        status: 401,
+        message: "Memo Not Added",
+      });
     }
   } catch (error) {
     console.log(error);
