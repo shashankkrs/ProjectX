@@ -305,19 +305,20 @@ app.get("/images/post_images/:imageName", isLoggedIn, (req, res) => {
   let imageName = req.params.imageName;
   let postID = imageName.split("_")[0];
   let imageNumber = imageName.split("_")[1];
-
+  console.log(postID, imageNumber);
   if (
     fs.existsSync(
       path.join(
         __dirname,
         "public",
         "images",
-        "temp_post_images",
+        "post_images",
         postID,
         imageNumber
       )
     )
   ) {
+    console.log("Hello");
     res.sendFile(
       path.join(
         __dirname,
