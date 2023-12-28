@@ -104,26 +104,10 @@ route.post("/:id/update", async (req, res) => {
       });
       vehicle.save();
     }
-
-    const changeBackgroundPromises = images.map((filename) => {
-      return changeVehicleBackground(filename);
+    res.send({
+      status: 200,
+      message: "Vehicle Updated",
     });
-
-    Promise.all(changeBackgroundPromises)
-      .then(() => {
-        res.send({
-          status: 200,
-          message: "Vehicle Updated",
-        });
-        return;
-      })
-      .catch((error) => {
-        res.send({
-          status: 500,
-          message: "Vehicle Updated But Background Not Changed",
-        });
-        return;
-      });
   } catch (error) {
     console.log(error);
   }

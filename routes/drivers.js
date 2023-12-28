@@ -4,12 +4,11 @@ const route = express.Router();
 const fileUpload = require("express-fileupload");
 const mime = require("mime");
 const path = require("path");
-const { exec } = require("child_process");
-const { changeVehicleBackground } = require("./../controller/functions");
+const User = require("../model/user");
+const bcrypt = require("bcrypt");
 
 route.use(fileUpload());
 
-// To Find drivers
 route.get("/", async (req, res) => {
   try {
     const driverList = await Driver.find().sort({ name: 1 });
@@ -30,10 +29,13 @@ route.get("/available", async (req, res) => {
   }
 });
 
-// To Add Drivers
 route.post("/add", async (req, res) => {
   try {
     const newDriver = await new Driver(req.body);
+    const newUser = await new User(req.body);
+    newUser.username = req.body.email;
+    newUser.driver = true;
+
     let filename = "";
     let ext = "";
     if (req.files) {
@@ -44,30 +46,16 @@ route.post("/add", async (req, res) => {
         path.join(__dirname, "..", "public/images", "profilepic", filename)
       );
       newDriver.profile_pic = filename;
-      let inputImage = path.join(
-        __dirname,
-        "..",
-        "public/images/profilepic/" + profile_pic + ext
-      );
-
-      let outputImage = path.join(
-        __dirname,
-        "..",
-        "public/images/temppic/" + profile_pic + ext
-      );
-
-      const command = `rembg i ${inputImage} ${outputImage}`;
-      exec(command, (err, stdout, stderr) => {
-        if (err) {
-          return;
-        } else {
-          fs.renameSync(outputImage, inputImage);
-        }
-      });
     } else {
       newDriver.profile_pic = "";
     }
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(newDriver.password, salt);
+    newDriver.password = hash;
+    newUser.password = hash;
     newDriver.save();
+    newUser.save();
+    console.log(newDriver);
     if (newDriver) {
       res.send({
         status: 200,
@@ -82,7 +70,6 @@ route.post("/add", async (req, res) => {
   }
 });
 
-// To Find Drivers by ID
 route.get("/:id", async (req, res) => {
   try {
     const driverID = req.params.id;

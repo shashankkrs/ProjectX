@@ -160,7 +160,6 @@ route.get("/:id", async (req, res) => {
 route.put("/update/:id", async (req, res) => {
   try {
     const userId = req.params.id;
-
     if (req.files && req.files.photo) {
       sampleFile = req.files.photo;
       var ext;
@@ -193,32 +192,10 @@ route.put("/update/:id", async (req, res) => {
       };
       const foundUser = await User.findByIdAndUpdate(userId, newBody);
 
-      let inputImage = path.join(
-        __dirname,
-        "..",
-        "public/images/profilepic/" + profile_pic_id + ext
-      );
-
-      let outputImage = path.join(
-        __dirname,
-        "..",
-        "public/images/temppic/" + profile_pic_id + ext
-      );
-
-      const command = `rembg i ${inputImage} ${outputImage}`;
-      exec(command, (err, stdout, stderr) => {
-        if (err) {
-          res.send(foundUser);
-          return;
-        } else {
-          fs.renameSync(outputImage, inputImage);
-          res.send({
-            status: 200,
-            message: "User Updated",
-            user: foundUser._id,
-          });
-          return;
-        }
+      res.send({
+        status: 200,
+        message: "User Updated",
+        user: foundUser._id,
       });
     } else {
       let newBody = {

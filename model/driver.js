@@ -1,10 +1,14 @@
 const mongoose = require("mongoose");
 
-const driverSchema =new mongoose.Schema({
+const driverSchema = new mongoose.Schema({
   sl_no: Number,
   profile_pic: String,
   name: String,
+  designation: String,
+  role: String,
   rank: String,
+  username: String,
+  password: String,
   license_no: String,
   date_from: String,
   date_to: String,

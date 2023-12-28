@@ -73,6 +73,7 @@ const locationRoute = require("./routes/location");
 const receiveVoucherRoute = require("./model/receivevoucher");
 const communityRoute = require("./routes/community");
 const workshopRoute = require("./routes/workshop");
+const imagesRoute = require("./routes/images");
 
 //Defining Functions
 const isLoggedIn = async (req, res, next) => {
@@ -108,7 +109,10 @@ app.post("/checklogin", async (req, res) => {
       if (loggedUser) {
         res.send({
           status: 200,
-          user: loggedUser,
+          user: {
+            name: loggedUser.name,
+            username: loggedUser.username,
+          },
         });
       } else {
         res.send({
@@ -153,6 +157,7 @@ app.post("/login", async (req, res) => {
     const foundUser = await User.findOne({
       username: req.body.username,
     });
+    console.log(foundUser);
     if (foundUser) {
       const isvalidUser = bcrypt.compareSync(
         req.body.password,
@@ -171,14 +176,18 @@ app.post("/login", async (req, res) => {
           .send({
             status: 200,
             message: "LOGGED IN",
-            token: token,
-            user: foundUser,
           });
       } else {
-        res.send("WRONG PASSWORD");
+        res.send({
+          status: 401,
+          message: "WRONG PASSWORD",
+        });
       }
     } else {
-      res.send("INVALID CREDENTIALS");
+      res.send({
+        status: 404,
+        message: "USER NOT FOUND",
+      });
     }
   } catch (error) {
     console.log(error);
@@ -233,153 +242,7 @@ app.use("/location", locationRoute);
 app.use("/community", isLoggedIn, communityRoute);
 app.use("/inspection", isLoggedIn, inspectionRoute);
 app.use("/workshop", isLoggedIn, workshopRoute);
-
-app.get("/images/profilepic/:imageName", isLoggedIn, (req, res) => {
-  if (
-    !fs.existsSync(
-      path.join(
-        __dirname,
-        "public",
-        "images",
-        "profilepic",
-        req.params.imageName
-      )
-    )
-  ) {
-    res.sendFile(
-      path.join(__dirname, "public", "images", "profilepic", "default.png")
-    );
-  } else {
-    res.sendFile(
-      path.join(
-        __dirname,
-        "public",
-        "images",
-        "profilepic",
-        req.params.imageName
-      )
-    );
-  }
-});
-
-app.get("/images/temp_post_images/:imageName", isLoggedIn, (req, res) => {
-  let imageName = req.params.imageName;
-  let postID = imageName.split("_")[0];
-  let imageNumber = imageName.split("_")[1];
-  if (
-    !fs.existsSync(
-      path.join(
-        __dirname,
-        "public",
-        "images",
-        "temp_post_images",
-        postID,
-        imageNumber
-      )
-    )
-  ) {
-    res.sendFile(
-      path.join(
-        __dirname,
-        "public",
-        "images",
-        "temp_post_images",
-        "default.png"
-      )
-    );
-  } else {
-    res.sendFile(
-      path.join(
-        __dirname,
-        "public",
-        "images",
-        "temp_post_images",
-        postID,
-        imageNumber
-      )
-    );
-  }
-});
-
-app.get("/images/post_images/:imageName", isLoggedIn, (req, res) => {
-  let imageName = req.params.imageName;
-  let postID = imageName.split("_")[0];
-  let imageNumber = imageName.split("_")[1];
-  console.log(postID, imageNumber);
-  if (
-    fs.existsSync(
-      path.join(
-        __dirname,
-        "public",
-        "images",
-        "post_images",
-        postID,
-        imageNumber
-      )
-    )
-  ) {
-    console.log("Hello");
-    res.sendFile(
-      path.join(
-        __dirname,
-        "public",
-        "images",
-        "post_images",
-        postID,
-        imageNumber
-      )
-    );
-  } else {
-    res.send("IMAGE NOT FOUND");
-  }
-});
-
-app.get("/images/vehicle_images/:imageName", isLoggedIn, (req, res) => {
-  if (
-    !fs.existsSync(
-      path.join(
-        __dirname,
-        "public",
-        "images",
-        "vehicle_images",
-        req.params.imageName
-      )
-    )
-  ) {
-    res.send("IMAGE NOT FOUND");
-  }
-  res.sendFile(
-    path.join(
-      __dirname,
-      "public",
-      "images",
-      "vehicle_images",
-      req.params.imageName
-    )
-  );
-});
-
-//Socket.io
-io.on("connection", (socket) => {
-  socket.on("join_map", () => {
-    socket.join("map");
-  });
-  socket.on("disconnect", () => {
-    // console.log("Disconnected ID : " + socket.user.username);
-  });
-  socket.on("location", (msg) => {
-    // console.log(msg);
-    let data = {
-      name: socket.user.username,
-      location: {
-        latitude: msg.coords.latitude,
-        longitude: msg.coords.longitude,
-      },
-    };
-    socket.to(socket.id).emit("location", data);
-    socket.in("map").emit("location", data);
-  });
-});
+app.use("/images", isLoggedIn, imagesRoute);
 
 //Listening Express App
 server.listen(port, () => {
